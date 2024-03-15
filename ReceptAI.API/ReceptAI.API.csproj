@@ -15,8 +15,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\ReceptAi.Infrastructure\ReceptAi.Infrastructure.csproj" />
-    <ProjectReference Include="..\RecipeManagement.Core\ReceptAi.Core.csproj" />
+    <ProjectReference Include="..\ReceptAI.Infrastructure\ReceptAI.Infrastructure.csproj" />
+    <ProjectReference Include="..\ReceptAI.Core\ReceptAI.Core.csproj" />
   </ItemGroup>
 
 </Project>

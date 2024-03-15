@@ -3,11 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.6.33829.357
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ReceptAi.API", "ReceptAI\ReceptAi.API.csproj", "{4C8DEB67-5CA7-47F2-B358-617E50F819DE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ReceptAI.API", "ReceptAI.API\ReceptAI.API.csproj", "{4C8DEB67-5CA7-47F2-B358-617E50F819DE}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ReceptAi.Infrastructure", "ReceptAi.Infrastructure\ReceptAi.Infrastructure.csproj", "{5D768453-8C85-47AF-BE49-143C536A3C35}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ReceptAI.Infrastructure", "ReceptAI.Infrastructure\ReceptAI.Infrastructure.csproj", "{5D768453-8C85-47AF-BE49-143C536A3C35}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ReceptAi.Core", "RecipeManagement.Core\ReceptAi.Core.csproj", "{899F484E-7E97-4119-A489-8A6557AB2770}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ReceptAI.Core", "ReceptAI.Core\ReceptAI.Core.csproj", "{899F484E-7E97-4119-A489-8A6557AB2770}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
