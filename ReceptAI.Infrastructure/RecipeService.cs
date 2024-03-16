@@ -1,16 +1,19 @@
 ﻿using Newtonsoft.Json.Linq;
 using Rystem.OpenAi;
+using ReceptAI.Core.Models;
+using ReceptAI.Core.Interfaces;
 
-
-namespace ReceptAi
+namespace ReceptAI.Infrastructure
 {
     public class RecipeService : IRecipeService
     {
         private readonly IOpenAiFactory _openAiFactory;
+        private readonly IRecipeRepository _recipeRepository;
 
-        public RecipeService(IOpenAiFactory openAIService)
+        public RecipeService(IOpenAiFactory openAIService, IRecipeRepository recipeRepository)
         {
             _openAiFactory = openAIService;
+            _recipeRepository = recipeRepository;
         }
 
         public async Task<Recipe> GetRecipeAsync(List<Ingredient> ingredients)
@@ -23,12 +26,25 @@ namespace ReceptAi
                 .ExecuteAsync();
 
             var allText = results.Choices[0].Message.Content;
-
             var recipe = FromJson(allText);
 
             return recipe;
         }
 
+        public async Task AddRecipeToFavouriteAsync(Recipe recipe, int userId)
+        {
+            recipe.UserId = userId;
+            await _recipeRepository.AddAsync(recipe);
+        }
+        public async Task DeleteRecipe(int recipeId)
+        {
+            await _recipeRepository.DeleteAsync(recipeId);
+        }
+
+        public async Task<IEnumerable<Recipe>> GetAllRecipesAsync(int id)
+        {
+            return await _recipeRepository.GetAllRecipesByUserIdAsync(id);
+        }
 
         public string MakePrompt(List<Ingredient> ingredients)
         {
@@ -41,7 +57,6 @@ namespace ReceptAi
 
             return prompt;
         }
-
 
         public static Recipe FromJson(string json)
         {
@@ -57,5 +72,7 @@ namespace ReceptAi
 
             return recipe;
         }
+
+        
     }
 }

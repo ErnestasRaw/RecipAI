@@ -1,15 +1,31 @@
-using ReceptAi;
+using Microsoft.AspNetCore.Hosting.Server;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.OpenApi.Models;
+using ReceptAI.Core.Interfaces;
+using ReceptAI.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddScoped<IRecipeService, RecipeService>();
+builder.Services.AddScoped<IRecipeRepository, RecipeRepository>();
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddControllers();
 builder.Services.AddOpenAi(settings =>
 {
-    settings.ApiKey = "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";
+    settings.ApiKey = "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";
+});
+builder.Services.AddDbContext<AppDbContext>(options =>
+{
+    options.UseMySql(@"server = localhost; port = 3306; database = receptaidb; username = root;",
+        new MySqlServerVersion(new Version(10, 4, 28)));
 });
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(c =>
+{
+    c.SwaggerDoc("v1", new OpenApiInfo { Title = "ReceptAI", Version = "v1" });
+    c.EnableAnnotations(); 
+});
 
 
 var app = builder.Build();
