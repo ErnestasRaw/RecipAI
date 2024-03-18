@@ -21,6 +21,6 @@ class Palette {
   ///Gradiant for [DrawerHeader]
   static const List<Color> greenGradient = [
     Color(0xFF1B5730),
-    Color(0xFF2E7D32),
+    Color(0xFF0A810A),
   ];
 }

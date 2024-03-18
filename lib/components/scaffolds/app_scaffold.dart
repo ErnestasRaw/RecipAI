@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:receptai/components/theme/palette.dart';
 import 'package:receptai/views/app/pages/favorites_page.dart';
 import 'package:receptai/views/app/pages/generator_page.dart';
-import 'package:receptai/views/app/pages/home_page.dart';
 import 'package:receptai/views/app/pages/profile_page.dart';
 
 import 'app_drawer.dart';
@@ -24,7 +23,7 @@ class _AppScaffoldState extends State<AppScaffold> {
 
   static const TextStyle optionStyle = TextStyle(fontSize: 30, fontWeight: FontWeight.bold);
   final List<Widget> _widgetOptions = <Widget>[
-    const HomePage(),
+    // const HomePage(),
     const GeneratorPage(),
     const FavoritesPage(),
     const ProfilePage(),
@@ -51,10 +50,10 @@ class _AppScaffoldState extends State<AppScaffold> {
       body: _widgetOptions.elementAt(_selectedIndex),
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Pagrindinis',
-          ),
+          // BottomNavigationBarItem(
+          //   icon: Icon(Icons.home),
+          //   label: 'Pagrindinis',
+          // ),
           BottomNavigationBarItem(
             icon: Icon(Icons.generating_tokens),
             label: 'Generatorius',

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:receptai/components/theme/palette.dart';
 import 'package:receptai/components/theme/sizes.dart';
+import 'package:receptai/controllers/user_controller.dart';
 import 'package:receptai/helpers/xlist.dart';
 
 class AppDrawer extends StatelessWidget {
@@ -36,18 +37,18 @@ class AppDrawer extends StatelessWidget {
                           mainAxisAlignment: MainAxisAlignment.center,
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            const Text(
-                              '', // UserController().loggedInUser?.Name ?? '',
-                              style: TextStyle(
+                            Text(
+                              UserController().loggedInUser?.name ?? '',
+                              style: const TextStyle(
                                 color: Colors.white,
                                 fontSize: 20,
                               ),
                               softWrap: true,
                               overflow: TextOverflow.fade,
                             ),
-                            const Text(
-                              '', //UserController().loggedInUser?.SurName ?? '',
-                              style: TextStyle(
+                            Text(
+                              UserController().loggedInUser?.surname ?? '',
+                              style: const TextStyle(
                                 color: Colors.white,
                                 fontSize: 20,
                               ),
@@ -66,7 +67,7 @@ class AppDrawer extends StatelessWidget {
             leading: const Icon(Icons.logout),
             title: const Text('Atsijungti'),
             onTap: () {
-              // UserController().logOut();
+              UserController().logout();
             },
           ),
         ],

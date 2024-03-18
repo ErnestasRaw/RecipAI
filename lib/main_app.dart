@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:receptai/components/theme/sizes.dart';
 import 'package:receptai/components/theme/theme.dart';
 import 'package:receptai/controllers/routing/navigator_utils.dart';
+import 'package:receptai/controllers/user_controller.dart';
 import 'package:receptai/globals.dart';
 import 'package:receptai/helpers/logger_helper.dart';
 import 'package:receptai/views/app/home_view.dart';
+import 'package:receptai/views/start/auth_view.dart';
 
 class MainApp extends StatefulWidget {
   const MainApp({super.key});
@@ -15,7 +17,7 @@ class MainApp extends StatefulWidget {
 
 class _MainAppState extends State<MainApp> {
   Widget _determineHomePage(BuildContext context) {
-    // if (!UserController().isLoggedIn) return const AuthView();
+    if (!UserController().isLoggedIn) return const AuthView();
 
     return const HomeView();
   }
@@ -37,7 +39,7 @@ class _MainAppState extends State<MainApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'VMU Pasirašymas',
+      title: 'Receptai',
       initialRoute: 'Home',
       navigatorKey: navigatorKey,
       theme: appTheme,

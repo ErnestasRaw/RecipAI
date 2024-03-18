@@ -64,6 +64,17 @@ class Styles {
     ));
   }
 
+  static TextStyle titleAg40Semi({Color? color = Palette.white}) {
+    return _processTextStyle(TextStyle(
+      // fontFamily: 'Poppins-Light',
+      fontFamily: 'Inter',
+      fontWeight: FontWeight.w600,
+      fontSize: 40,
+      height: 30.26 / 25,
+      color: color,
+    ));
+  }
+
   /// Like ag16Regular.copyWith(height: 1.5) - cannot do that because "has inherit=true, resetting height won't work"
   /// setting inherit:false to let HtmlWidget do something with it
   static TextStyle htmlText({Color? color}) {
