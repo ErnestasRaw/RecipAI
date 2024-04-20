@@ -16,7 +16,7 @@ namespace ReceptAI.Infrastructure
             _recipeRepository = recipeRepository;
         }
 
-        public async Task<Recipe> GetRecipeAsync(List<Ingredient> ingredients)
+        public async Task<Recipe> GenerateRecipeAsync(List<Ingredient> ingredients)
         {
             var openAiApi = _openAiFactory.Create();
             var results = await openAiApi.Chat
@@ -27,23 +27,29 @@ namespace ReceptAI.Infrastructure
 
             var allText = results.Choices[0].Message.Content;
             var recipe = FromJson(allText);
+            await _recipeRepository.AddRecipeAsync(recipe);
 
             return recipe;
         }
 
-        public async Task AddRecipeToFavouriteAsync(Recipe recipe, int userId)
+        public async Task AddRecipeToFavouriteAsync(int userId, int recipeId )
         {
-            recipe.UserId = userId;
-            await _recipeRepository.AddAsync(recipe);
-        }
-        public async Task DeleteRecipe(int recipeId)
-        {
-            await _recipeRepository.DeleteAsync(recipeId);
+            await _recipeRepository.AddRecipeToFavouriteAsync(userId, recipeId);
         }
 
-        public async Task<IEnumerable<Recipe>> GetAllRecipesAsync(int id)
+        public async Task DeleteFavouriteRecipe(int recipeId)
         {
-            return await _recipeRepository.GetAllRecipesByUserIdAsync(id);
+            await _recipeRepository.DeleteFavouriteRecipeAsync(recipeId);
+        }
+
+        public async Task<IEnumerable<Recipe>> GetAllFavouriteRecipesAsync(int userId)
+        {
+            return await _recipeRepository.GetFavouriteRecipesIdAsync(userId);
+        }
+
+        public async Task<IEnumerable<Ingredient>> GetAllIngredientsAsync(FoodCategory category)
+        {
+            return await _recipeRepository.GetIngredientsAsync(category);
         }
 
         public string MakePrompt(List<Ingredient> ingredients)
@@ -51,9 +57,9 @@ namespace ReceptAI.Infrastructure
             string prompt = "Generate me a recipe that i could use if i only have: ";
             foreach (var ingredient in ingredients)
             {
-                prompt += ingredient.Name + " " + ingredient.Quantity + ", ";
+                prompt += ingredient.Name + ", ";
             }
-            prompt += "in this stucture: Name, ingredients, instructions in JSON.each ingredient have name and quantity ";
+            prompt += "in this stucture: Name, ingredients, instructions in json as text. write ingredients and instructions in a list. ";
 
             return prompt;
         }
@@ -66,13 +72,11 @@ namespace ReceptAI.Infrastructure
             var recipe = new Recipe
             {
                 Name = recipeData["name"].ToString(),
-                Ingredients = recipeData["ingredients"].ToObject<List<Ingredient>>(),
+                Ingredients = string.Join("\n", recipeData["ingredients"].ToObject<List<string>>()),
                 Instructions = string.Join("\n", recipeData["instructions"].ToObject<List<string>>())
             };
 
             return recipe;
         }
-
-        
     }
 }

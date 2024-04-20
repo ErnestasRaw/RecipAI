@@ -1,6 +1,4 @@
-﻿using Newtonsoft.Json;
-
-namespace ReceptAI.Core.Models
+﻿namespace ReceptAI.Core.Models
 {
     public class User
     {

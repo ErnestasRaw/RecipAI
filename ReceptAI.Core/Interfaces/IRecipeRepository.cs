@@ -4,10 +4,13 @@ namespace ReceptAI.Core.Interfaces
 {
     public interface IRecipeRepository
     {
-        Task<Recipe> GetRecipeByIdAsync(int id);
-        Task<IEnumerable<Recipe>> GetAllRecipesByUserIdAsync(int userId);
-        Task AddAsync(Recipe recipe);
-        Task UpdateAsync(Recipe recipe);
-        Task DeleteAsync(int id);
+        Task<IEnumerable<Recipe>> GetFavouriteRecipesIdAsync(int userId);
+        Task AddRecipeToFavouriteAsync(int userId, int recipeId);
+        Task DeleteFavouriteRecipeAsync(int id);
+        Task AddRecipeAsync(Recipe recipe);
+        //
+        Task<IEnumerable<Ingredient>> GetIngredientsAsync(FoodCategory category);
+
+
     }
 }

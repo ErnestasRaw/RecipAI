@@ -16,34 +16,40 @@ namespace ReceptAi.Controllers
             _recipeService = recipeService;
         }
 
-        [HttpPost("GetRecipe")]
+        [HttpPost("GenerateRecipe", Name = "GenerateRecipe")]
         [SwaggerOperation(Summary = "Generates a recipe based on provided ingredients", Description = "Provides a recipe", OperationId = "GetRecipe")]
-        public async Task<Recipe> GetRecipe([FromBody] List<Ingredient> ingredients)
+        public async Task<Recipe> GenerateRecipe([FromBody] List<Ingredient> ingredients)
         {
-            return await _recipeService.GetRecipeAsync(ingredients);
+            return await _recipeService.GenerateRecipeAsync(ingredients);
         }
 
-        [HttpPost("AddRecipeToFavourite/{userId}", Name = "AddRecipeToFavourite")]
+        [HttpPost("AddRecipeToFavourite/{userId}/{recipeId}", Name = "AddRecipeToFavourite")]
         [SwaggerOperation(Summary = "Adds a recipe to a user's favorites", Description = "Adds a new favorite recipe for the specified user", OperationId = "AddRecipeToFavourite")]
-        public async Task<IActionResult> AddRecipeToFavourite([FromBody] Recipe recipe, int userId)
+        public async Task<IActionResult> AddRecipeToFavourite( int userId,int recipeId)
         {
-            await _recipeService.AddRecipeToFavouriteAsync(recipe, userId);
+            await _recipeService.AddRecipeToFavouriteAsync(userId,recipeId );
             return Ok();
         }
 
-        [HttpGet("GetAllUserRecipes/{userId}", Name = "GetAllUserRecipes")]
+        [HttpGet("GetAllFavouriteRecipes/{userId}", Name = "GetAllFavouriteRecipes")]
         [SwaggerOperation(Summary = "Gets all favorite recipes of a user", Description = "Returns all recipes marked as favorite by the specified user", OperationId = "GetAllUserRecipes")]
-        public async Task<IEnumerable<Recipe>> GetAllUserRecipes(int userId)
+        public async Task<IEnumerable<Recipe>> GetAllFavouriteRecipes(int userId)
         {
-            return await _recipeService.GetAllRecipesAsync(userId);
+            return await _recipeService.GetAllFavouriteRecipesAsync(userId);
         }
 
-        [HttpDelete("DeleteRecipe/{recipeId}", Name = "DeleteRecipe")]
+        [HttpDelete("DeleteFavouriteRecipe/{recipeId}", Name = "DeleteFavouriteRecipe")]
         [SwaggerOperation(Summary = "Deletes a recipe", Description = "Deletes the specified recipe from the database", OperationId = "DeleteRecipe")]
-        public async Task<IActionResult> DeleteRecipe(int recipeId)
+        public async Task<IActionResult> DeleteFavouriteRecipe(int recipeId)
         {
-            await _recipeService.DeleteRecipe(recipeId);
+            await _recipeService.DeleteFavouriteRecipe(recipeId);
             return Ok();
+        }
+
+        [HttpGet("GetIngredients/{categoryId}", Name = "GetIngredients")]
+        public async Task<IEnumerable<Ingredient>> GetIngredients(FoodCategory categoryId)
+        {
+            return await _recipeService.GetAllIngredientsAsync(categoryId);
         }
     }
 }

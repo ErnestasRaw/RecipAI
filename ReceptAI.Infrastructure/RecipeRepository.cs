@@ -13,44 +13,47 @@ namespace ReceptAI.Infrastructure
             _context = context;
         }
 
-        public async Task<Recipe> GetRecipeByIdAsync(int id)
-        {
-            return await _context.Recipes.FindAsync(id);
-        }
-
-        public async Task<IEnumerable<Recipe>> GetAllRecipesByUserIdAsync(int userId)
+        public async Task<IEnumerable<Recipe>> GetFavouriteRecipesIdAsync(int userId)
         {
             return await _context.Recipes
                         .Where(r => r.UserId == userId)
-                        .Include(r => r.Ingredients)
                         .ToListAsync();
         }
 
-        public async Task AddAsync(Recipe recipe)
+        public async Task AddRecipeAsync(Recipe recipe)
         {
             await _context.Recipes.AddAsync(recipe);
             await _context.SaveChangesAsync();
         }
 
-        public async Task UpdateAsync(Recipe recipe)
+        public async Task AddRecipeToFavouriteAsync(int userId, int recipeId)
         {
-            _context.Recipes.Update(recipe);
-            await _context.SaveChangesAsync();
+            var recipe = await _context.Recipes.FindAsync(recipeId);
+
+            if (recipe != null)
+            {           
+                recipe.UserId = userId;
+                await _context.SaveChangesAsync();
+            }
         }
 
-        public async Task DeleteAsync(int id)
+        public async Task DeleteFavouriteRecipeAsync(int id)
         {
-            var recipe = await _context.Recipes
-                                .Include(r => r.Ingredients) 
-                                .FirstOrDefaultAsync(r => r.RecipeId == id);
+            var recipe = await _context.Recipes.Where(x => x.RecipeId == id).FirstOrDefaultAsync();
 
             if (recipe != null)
             {
-                _context.Ingredients.RemoveRange(recipe.Ingredients);
                 _context.Recipes.Remove(recipe);
 
                 await _context.SaveChangesAsync();
             }
+        }
+
+        public async Task<IEnumerable<Ingredient>> GetIngredientsAsync(FoodCategory category)
+        {
+            return await _context.Ingredients
+                          .Where(ingredient => ingredient.CategoryId == category)
+                          .ToListAsync();
         }
     }
 }
