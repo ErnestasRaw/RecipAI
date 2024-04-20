@@ -13,7 +13,7 @@ builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddControllers();
 builder.Services.AddOpenAi(settings =>
 {
-    settings.ApiKey = "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";
+    settings.ApiKey = "";
 });
 builder.Services.AddDbContext<AppDbContext>(options =>
 {
