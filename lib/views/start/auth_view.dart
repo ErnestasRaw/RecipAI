@@ -27,8 +27,8 @@ class _AuthViewState extends State<AuthView> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
-        decoration: const BoxDecoration(
-          color: Palette.seedColor,
+        decoration: BoxDecoration(
+          color: Palette.seedColor.withOpacity(0.7),
         ),
         child: Row(
           mainAxisSize: MainAxisSize.max,
