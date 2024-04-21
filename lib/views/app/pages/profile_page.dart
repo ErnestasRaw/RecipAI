@@ -52,58 +52,11 @@ class _ProfilePageState extends State<ProfilePage> {
                   children: [
                     Expanded(
                       child: FilledButton.icon(
-                        onPressed: () async {
-                          //Open change password dialog
-                          await showDialog<void>(
-                            context: context,
-                            barrierDismissible: true, // false = user must tap button, true = tap outside dialog
-                            builder: (BuildContext dialogContext) {
-                              return AlertDialog(
-                                title: const Text('Keisti slaptažodį'),
-                                content: Column(
-                                  children: [
-                                    const TextField(
-                                      decoration: InputDecoration(
-                                        labelText: 'Dabartinis slaptažodis',
-                                      ),
-                                    ),
-                                    const TextField(
-                                      decoration: InputDecoration(
-                                        labelText: 'Naujas slaptažodis',
-                                      ),
-                                    ),
-                                    const TextField(
-                                      decoration: InputDecoration(
-                                        labelText: 'Pakartokite naują slaptažodį',
-                                      ),
-                                    ),
-                                  ].addSpacing(Sizes.spacingSmall),
-                                ),
-                                actions: [
-                                  FilledButton(
-                                    onPressed: () async {
-                                      ScaffoldMessenger.of(context).showSnackBar(
-                                        const SnackBar(
-                                          content: Text('Slaptažodis pakeistas'),
-                                        ),
-                                      );
-                                      Navigator.of(dialogContext).pop();
-                                    },
-                                    child: const Text('Atšaukti'),
-                                  ),
-                                  TextButton(
-                                    child: const Text('Išsaugoti'),
-                                    onPressed: () {
-                                      Navigator.of(dialogContext).pop(); // Dismiss alert dialog
-                                    },
-                                  ),
-                                ],
-                              );
-                            },
-                          );
-                        },
+                        onPressed: () {},
                         icon: const Icon(Icons.edit),
-                        label: const Text('Keisti slaptažodį'),
+                        label: const Text(
+                          'Keisti slaptažodį',
+                        ),
                       ),
                     ),
                   ],
