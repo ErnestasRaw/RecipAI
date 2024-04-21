@@ -14,6 +14,12 @@ class GeneratorPage extends StatefulWidget {
 class _GeneratorPageState extends State<GeneratorPage> {
   final GeneratorController generatorController = GeneratorController();
 
+  onCategoryChange(ProductCategory? value) {
+    setState(() {
+      generatorController.selectedCategory = value!;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -25,11 +31,7 @@ class _GeneratorPageState extends State<GeneratorPage> {
               Expanded(
                 child: DropdownButton<ProductCategory>(
                   value: generatorController.selectedCategory,
-                  onChanged: (ProductCategory? newValue) {
-                    setState(() {
-                      generatorController.selectedCategory = newValue!;
-                    });
-                  },
+                  onChanged: onCategoryChange,
                   isExpanded: true,
                   items: ProductCategory.values
                       .map<DropdownMenuItem<ProductCategory>>(
@@ -50,16 +52,19 @@ class _GeneratorPageState extends State<GeneratorPage> {
                 return ListTile(
                   title: Text(generatorController.filteredIngredients.elementAt(index).name),
                   trailing: Checkbox(
-                    value: generatorController.selectedIngredients
-                        .contains(generatorController.filteredIngredients.elementAt(index)),
+                    value: generatorController.selectedIngredients.contains(
+                      generatorController.filteredIngredients.elementAt(index),
+                    ),
                     onChanged: (bool? value) {
                       setState(() {
                         if (value!) {
-                          generatorController.selectedIngredients
-                              .add(generatorController.filteredIngredients.elementAt(index));
+                          generatorController.selectedIngredients.add(
+                            generatorController.filteredIngredients.elementAt(index),
+                          );
                         } else {
-                          generatorController.selectedIngredients
-                              .remove(generatorController.filteredIngredients.elementAt(index));
+                          generatorController.selectedIngredients.remove(
+                            generatorController.filteredIngredients.elementAt(index),
+                          );
                         }
                       });
                     },
