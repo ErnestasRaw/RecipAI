@@ -18,8 +18,8 @@ namespace ReceptAI.Infrastructure
 
         public async Task<Recipe> GenerateRecipeAsync(List<Ingredient> ingredients)
         {
-            var openAiApi = _openAiFactory.Create();
-            var results = await openAiApi.Chat
+            var openAIApi = _openAiFactory.Create();
+            var results = await openAIApi.Chat
                 .RequestWithUserMessage(MakePrompt(ingredients))
                 .WithModel(ChatModelType.Gpt35Turbo)
                 .WithTemperature(0.1)
