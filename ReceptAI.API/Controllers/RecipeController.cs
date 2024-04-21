@@ -47,6 +47,7 @@ namespace ReceptAi.Controllers
         }
 
         [HttpGet("GetIngredients/{categoryId}", Name = "GetIngredients")]
+        [SwaggerOperation(Summary = "Gets all ingredients of a specified category", Description = "Returns all ingredients of the specified category", OperationId = "GetIngredients")]
         public async Task<IEnumerable<Ingredient>> GetIngredients(FoodCategory categoryId)
         {
             return await _recipeService.GetAllIngredientsAsync(categoryId);
