@@ -8,9 +8,6 @@ namespace ReceptAI.Core.Interfaces
         Task AddRecipeToFavouriteAsync(int userId, int recipeId);
         Task DeleteFavouriteRecipeAsync(int id);
         Task AddRecipeAsync(Recipe recipe);
-        //
         Task<IEnumerable<Ingredient>> GetIngredientsAsync(FoodCategory category);
-
-
     }
 }
