@@ -15,11 +15,7 @@ class Recipe {
         recipeId: json['recipeId'],
         name: json['name'],
         instructions: json['instructions'],
-        ingredients: json['ingredients'] != null
-            ? List<String>.from(
-                json['ingredients'].map((x) => x),
-              )
-            : null,
+        ingredients: json['ingredients'] != null ? List<String>.from(json['ingredients'].map((x) => x)) : null,
       );
 
   Map<String, dynamic> toJson() {
