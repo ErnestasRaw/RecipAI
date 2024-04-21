@@ -1,29 +1,28 @@
-// This is a basic Flutter widget test.
-//
-// To perform an interaction with a widget in your test, use the WidgetTester
-// utility in the flutter_test package. For example, you can send tap and scroll
-// gestures. You can also use WidgetTester to find child widgets in the widget
-// tree, read text, and verify that the values of widget properties are correct.
-
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:receptai/main_app.dart';
+import 'package:receptai/views/start/auth_view.dart';
 
 void main() {
-  testWidgets('Counter increments smoke test', (WidgetTester tester) async {
-    // Build our app and trigger a frame.
-    await tester.pumpWidget(const MainApp());
+  testWidgets('AuthView UI Test', (WidgetTester tester) async {
+    await tester.pumpWidget(const MaterialApp(
+      home: AuthView(),
+    ));
 
-    // Verify that our counter starts at 0.
-    expect(find.text('0'), findsOneWidget);
-    expect(find.text('1'), findsNothing);
+    expect(find.text('ReceptAI'), findsOneWidget);
 
-    // Tap the '+' icon and trigger a frame.
-    await tester.tap(find.byIcon(Icons.add));
+    expect(find.text('Prisijungimas'), findsOneWidget);
+    expect(find.text('Registracija'), findsNothing);
+
+    await tester.tap(find.text('Registruotis'));
     await tester.pump();
 
-    // Verify that our counter has incremented.
-    expect(find.text('0'), findsNothing);
-    expect(find.text('1'), findsOneWidget);
+    expect(find.text('Prisijungimas'), findsNothing);
+    expect(find.text('Registracija'), findsOneWidget);
+
+    await tester.tap(find.text('Prisijungti'));
+    await tester.pump();
+
+    expect(find.text('Prisijungimas'), findsOneWidget);
+    expect(find.text('Registracija'), findsNothing);
   });
 }
