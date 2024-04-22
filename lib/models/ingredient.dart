@@ -25,6 +25,7 @@ class Ingredient {
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = {};
+
     data['ingredientId'] = ingredientId;
     data['name'] = name;
     data['quantity'] = quantity;
