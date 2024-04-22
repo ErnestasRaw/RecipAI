@@ -1,0 +1,27 @@
+name: Feature Branch CI
+
+on:
+  push:
+    branches:
+      - backend-feature
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: '7.0'
+
+      - name: Restore dependencies
+        run: dotnet restore ReceptAI.sln 
+
+      - name: Build
+        run: dotnet build ReceptAI.sln --no-restore -c Release
+
+      - name: Run tests
+        run: dotnet test ReceptAI.sln --no-build -c Release --verbosity normal
