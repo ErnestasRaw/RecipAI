@@ -67,8 +67,8 @@ namespace ReceptAi.Tests
 			var result = await controller.GetAllFavouriteRecipes(userId);
 
 			// Assert
-			var actionResult = Assert.IsType<ActionResult<IEnumerable<Recipe>>>(result);
-			Assert.Equal(expectedRecipes, actionResult.Value);
+			var actionResult = Assert.IsAssignableFrom<IEnumerable<Recipe>>(result);
+			Assert.Equal(expectedRecipes, actionResult);
 		}
 
 		[Fact]
@@ -102,8 +102,8 @@ namespace ReceptAi.Tests
 			var result = await controller.GetIngredients(categoryId);
 
 			// Assert
-			var actionResult = Assert.IsType<ActionResult<IEnumerable<Ingredient>>>(result);
-			Assert.Equal(expectedIngredients, actionResult.Value);
+			var actionResult = Assert.IsAssignableFrom<IEnumerable<Ingredient>>(result);
+			Assert.Equal(expectedIngredients, actionResult);
 		}
 
 		[Fact]
@@ -137,8 +137,12 @@ namespace ReceptAi.Tests
 			var result = await controller.LoginUser(user);
 
 			// Assert
-			var actionResult = Assert.IsType<ActionResult<User>>(result);
-			Assert.Equal(expectedUser, actionResult.Value);
+			Assert.IsType<OkObjectResult>(result); // First assert the result is an OkObjectResult
+
+			var okResult = result as OkObjectResult;
+			var actualUser = Assert.IsType<User>(okResult.Value); // Extract the User object and assert its type
+			Assert.Equal(expectedUser.Username, actualUser.Username); // Optionally, assert more details as needed
+			Assert.Equal(expectedUser.Password, actualUser.Password);
 		}
 
 		[Fact]
