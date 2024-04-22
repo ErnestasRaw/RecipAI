@@ -61,6 +61,7 @@ class _ProfilePageState extends State<ProfilePage> {
                               return AlertDialog(
                                 title: const Text('Keisti slaptažodį'),
                                 content: Column(
+                                  mainAxisSize: MainAxisSize.min,
                                   children: [
                                     const TextField(
                                       decoration: InputDecoration(
@@ -74,7 +75,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                     ),
                                     const TextField(
                                       decoration: InputDecoration(
-                                        labelText: 'Pakartokite naują slaptažodį',
+                                        labelText: 'Pakartokite slaptažodį',
                                       ),
                                     ),
                                   ].addSpacing(Sizes.spacingSmall),

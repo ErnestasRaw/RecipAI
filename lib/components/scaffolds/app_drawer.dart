@@ -1,7 +1,10 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:receptai/components/theme/palette.dart';
 import 'package:receptai/components/theme/sizes.dart';
+import 'package:receptai/controllers/routing/navigator_utils.dart';
 import 'package:receptai/controllers/user_controller.dart';
+import 'package:receptai/dev_view.dart';
 import 'package:receptai/helpers/xlist.dart';
 
 class AppDrawer extends StatelessWidget {
@@ -70,6 +73,13 @@ class AppDrawer extends StatelessWidget {
               UserController().logout();
             },
           ),
+          // if (kDebugMode)
+          //   ElevatedButton(
+          //     onPressed: () {
+          //       pushMaterial(context, (context) => DevView());
+          //     },
+          //     child: Text('DevView'),
+          //   ),
         ],
       ),
     );

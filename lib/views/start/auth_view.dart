@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:receptai/components/theme/palette.dart';
 import 'package:receptai/components/theme/sizes.dart';
 import 'package:receptai/components/theme/styles.dart';
+import 'package:receptai/controllers/routing/navigator_utils.dart';
 import 'package:receptai/controllers/user_controller.dart';
 import 'package:receptai/helpers/xlist.dart';
 import 'package:receptai/models/user.dart';
@@ -16,6 +17,8 @@ class AuthView extends StatefulWidget {
 class _AuthViewState extends State<AuthView> {
   bool isLoginPage = true;
   bool rememberMe = true;
+
+  bool isFirstAttempt = true;
 
   void changePage() {
     setState(() {
@@ -103,6 +106,16 @@ class _AuthViewState extends State<AuthView> {
                     Expanded(
                       child: FilledButton(
                         onPressed: () {
+                          if (isFirstAttempt) {
+                            ScaffoldMessenger.of(navigatorKey.currentContext!).showSnackBar(
+                              const SnackBar(
+                                content: Text('Neteisingi prisijungimo duomenys.'),
+                              ),
+                            );
+
+                            isFirstAttempt = false;
+                            return;
+                          }
                           UserController().login(User(
                             userId: 1,
                             name: 'Vardenis',

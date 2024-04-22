@@ -7,6 +7,7 @@ import 'package:receptai/helpers/logger_helper.dart';
 class AuthenticationApi {
   AuthenticationApi._();
 
+  /**/
   static Future<http.Response> login(
     String email,
     String password,
