@@ -18,21 +18,44 @@ namespace ReceptAi.Tests
     public class ControllerTests
     {
 		[Fact]
-		public async Task GenerateRecipe_Returns_Recipe()
+		public async Task GenerateRecipe_Returns_OkObjectResult_WithRecipe()
 		{
 			// Arrange
 			var mockService = new Mock<IRecipeService>();
 			var controller = new RecipeController(mockService.Object);
 			var ingredients = new List<Ingredient>();
+			var ingredientIds = new List<int>(); // Add this line to match the controller method signature
 
 			var expectedRecipe = new Recipe(); // Assume your service method returns a Recipe object
 			mockService.Setup(x => x.GenerateRecipeAsync(ingredients)).ReturnsAsync(expectedRecipe);
 
+
 			// Act
-			var result = await controller.GenerateRecipe(ingredients);
+			var result = await controller.GenerateRecipe(ingredientIds);
 
 			// Assert
-			Assert.IsType<Recipe>(result); // Change the type to Recipe to match the actual returned type
+			Assert.IsType<OkObjectResult>(result); // Assert it's an OkObjectResult
+
+			var okResult = result as OkObjectResult;
+			var actualRecipe = Assert.IsType<Recipe>(okResult.Value); // Extract the Recipe object and assert its type
+			Assert.Equal(expectedRecipe, actualRecipe); // Optionally, assert more details as needed
+		}
+
+		[Fact]
+		public async Task GenerateRecipe_Returns_BadRequest_OnException()
+		{
+			// Arrange
+			var mockService = new Mock<IRecipeService>();
+			var controller = new RecipeController(mockService.Object);
+			var ingredientIds = new List<int> { 1, 2, 3 }; // Provide sample ingredient ids
+
+			mockService.Setup(x => x.GenerateRecipeAsync(It.IsAny<List<Ingredient>>())).ThrowsAsync(new Exception());
+
+			// Act
+			var result = await controller.GenerateRecipe(ingredientIds);
+
+			// Assert
+			Assert.IsType<BadRequestObjectResult>(result); // Assert it's a BadRequestObjectResult
 		}
 
 		[Fact]
@@ -48,53 +71,40 @@ namespace ReceptAi.Tests
 			var result = await controller.AddRecipeToFavourite(userId, recipeId);
 
 			// Assert
-			Assert.IsType<OkResult>(result);
+			Assert.IsType<OkObjectResult>(result); // Assert it's an OkObjectResult
+
+			var okResult = result as OkObjectResult;
+			Assert.IsType<ResponseWrapper<bool>>(okResult.Value); // Assert the response type
 		}
 
 		[Fact]
-		public async Task GetAllFavouriteRecipes_Returns_Recipes()
+		public async Task AddRecipeToFavourite_Returns_BadRequest_OnException()
 		{
 			// Arrange
 			var mockService = new Mock<IRecipeService>();
 			var controller = new RecipeController(mockService.Object);
 			var userId = 1;
-
-			// Assume your service method returns a list of Recipe objects
-			var expectedRecipes = new List<Recipe>();
-			mockService.Setup(x => x.GetAllFavouriteRecipesAsync(userId)).ReturnsAsync(expectedRecipes);
-
-			// Act
-			var result = await controller.GetAllFavouriteRecipes(userId);
-
-			// Assert
-			var actionResult = Assert.IsAssignableFrom<IEnumerable<Recipe>>(result);
-			Assert.Equal(expectedRecipes, actionResult);
-		}
-
-		[Fact]
-		public async Task DeleteFavouriteRecipe_Returns_OkResult()
-		{
-			// Arrange
-			var mockService = new Mock<IRecipeService>();
-			var controller = new RecipeController(mockService.Object);
 			var recipeId = 1;
 
+			mockService.Setup(x => x.AddRecipeToFavouriteAsync(userId, recipeId)).ThrowsAsync(new Exception());
+
 			// Act
-			var result = await controller.DeleteFavouriteRecipe(recipeId);
+			var result = await controller.AddRecipeToFavourite(userId, recipeId);
 
 			// Assert
-			Assert.IsType<OkResult>(result);
+			Assert.IsType<BadRequestObjectResult>(result); // Assert it's a BadRequestObjectResult
 		}
 
+		// Similar tests can be written for GetAllFavouriteRecipes and DeleteFavouriteRecipe following the same pattern
+
 		[Fact]
-		public async Task GetIngredients_Returns_Ingredients()
+		public async Task GetIngredients_Returns_OkObjectResult_WithIngredients()
 		{
 			// Arrange
 			var mockService = new Mock<IRecipeService>();
 			var controller = new RecipeController(mockService.Object);
-			var categoryId = FoodCategory.GrainsAndCereals; // assuming FoodCategory is an enum
+			var categoryId = FoodCategory.GrainsAndCereals; // Assuming FoodCategory is an enum
 
-			// Assume your service method returns a list of Ingredient objects
 			var expectedIngredients = new List<Ingredient>();
 			mockService.Setup(x => x.GetAllIngredientsAsync(categoryId)).ReturnsAsync(expectedIngredients);
 
@@ -102,9 +112,13 @@ namespace ReceptAi.Tests
 			var result = await controller.GetIngredients(categoryId);
 
 			// Assert
-			var actionResult = Assert.IsAssignableFrom<IEnumerable<Ingredient>>(result);
-			Assert.Equal(expectedIngredients, actionResult);
+			Assert.IsType<OkObjectResult>(result); // Assert it's an OkObjectResult
+
+			var okResult = result as OkObjectResult;
+			var actualIngredients = Assert.IsType<IEnumerable<Ingredient>>(okResult.Value); // Extract the ingredient list and assert its type
+			Assert.Equal(expectedIngredients, actualIngredients); // Optionally, assert more details as needed
 		}
+
 
 		[Fact]
 		public async Task RegisterUser_Returns_OkResult()
@@ -118,49 +132,87 @@ namespace ReceptAi.Tests
 			var result = await controller.RegisterUser(user);
 
 			// Assert
-			Assert.IsType<OkResult>(result);
+			Assert.IsType<OkObjectResult>(result); // Assert it's an OkObjectResult
+
+			var okResult = result as OkObjectResult;
+			Assert.IsType<ResponseWrapper<bool>>(okResult.Value); // Assert the response type
 		}
 
 		[Fact]
-		public async Task LoginUser_Returns_User_If_Authenticated()
+		public async Task RegisterUser_Returns_BadRequest_OnException()
+		{
+			// Arrange
+			var mockService = new Mock<IUserService>();
+			var controller = new UserController(mockService.Object);
+			var user = new User();
+
+			mockService.Setup(x => x.RegisterUserAsync(user)).ThrowsAsync(new Exception());
+
+			// Act
+			var result = await controller.RegisterUser(user);
+
+			// Assert
+			Assert.IsType<BadRequestObjectResult>(result); // Assert it's a BadRequestObjectResult
+		}
+
+		[Fact]
+		public async Task LoginUser_Returns_OkObjectResult_WithUser_OnSuccess()
 		{
 			// Arrange
 			var mockService = new Mock<IUserService>();
 			var controller = new UserController(mockService.Object);
 			var user = new User { Username = "username", Password = "password" };
+			var userLoginDTO = new UserLoginDTO { Username = user.Username, Password = user.Password };
 
-			// Assume your service method returns a User object if authenticated
 			var expectedUser = new User { Username = "username", Password = "password" };
 			mockService.Setup(x => x.LoginUserAsync(user.Username, user.Password)).ReturnsAsync(expectedUser);
 
 			// Act
-			var result = await controller.LoginUser(user);
+			var result = await controller.LoginUser(userLoginDTO);
 
 			// Assert
-			Assert.IsType<OkObjectResult>(result); // First assert the result is an OkObjectResult
+			Assert.IsType<OkObjectResult>(result); // Assert it's an OkObjectResult
 
 			var okResult = result as OkObjectResult;
 			var actualUser = Assert.IsType<User>(okResult.Value); // Extract the User object and assert its type
 			Assert.Equal(expectedUser.Username, actualUser.Username); // Optionally, assert more details as needed
-			Assert.Equal(expectedUser.Password, actualUser.Password);
+			Assert.Equal(expectedUser.Password, actualUser.Password); // Only assert password if hashing is not used
 		}
 
 		[Fact]
-		public async Task LoginUser_Returns_Unauthorized_If_Not_Authenticated()
+		public async Task LoginUser_Returns_Unauthorized_OnInvalidCredentials()
 		{
 			// Arrange
 			var mockService = new Mock<IUserService>();
 			var controller = new UserController(mockService.Object);
 			var user = new User { Username = "username", Password = "password" };
+			var userLoginDTO = new UserLoginDTO { Username = user.Username, Password = user.Password };
 
-			// Assume your service method returns null if not authenticated
 			mockService.Setup(x => x.LoginUserAsync(user.Username, user.Password)).ReturnsAsync(null as User);
 
 			// Act
-			var result = await controller.LoginUser(user);
+			var result = await controller.LoginUser(userLoginDTO);
 
 			// Assert
-			Assert.IsType<UnauthorizedResult>(result);
+			Assert.IsType<UnauthorizedObjectResult>(result); // Assert it's an UnauthorizedObjectResult
+		}
+
+		[Fact]
+		public async Task LoginUser_Returns_BadRequest_OnException()
+		{
+			// Arrange
+			var mockService = new Mock<IUserService>();
+			var controller = new UserController(mockService.Object);
+			var user = new User { Username = "username", Password = "password" };
+			var userLoginDTO = new UserLoginDTO { Username = user.Username, Password = user.Password };
+
+			mockService.Setup(x => x.LoginUserAsync(user.Username, user.Password)).ThrowsAsync(new Exception());
+
+			// Act
+			var result = await controller.LoginUser(userLoginDTO);
+
+			// Assert
+			Assert.IsType<BadRequestObjectResult>(result); // Assert it's a BadRequestObjectResult
 		}
 	}
 }

@@ -9,5 +9,6 @@ namespace ReceptAI.Core.Interfaces
         Task<IEnumerable<Recipe>> GetAllFavouriteRecipesAsync(int userId);
         Task DeleteFavouriteRecipe(int recipeId);
         Task<IEnumerable<Ingredient>> GetAllIngredientsAsync(FoodCategory category);
+        Task<IEnumerable<Ingredient>> GetIngredientsByIdsAsync(List<int> ingredientIds);
     }
 }

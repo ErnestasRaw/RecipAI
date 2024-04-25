@@ -52,7 +52,12 @@ namespace ReceptAI.Infrastructure
             return await _recipeRepository.GetIngredientsAsync(category);
         }
 
-        public string MakePrompt(List<Ingredient> ingredients)
+		public async Task<IEnumerable<Ingredient>> GetIngredientsByIdsAsync(List<int> ingredientIds)
+		{
+			return await _recipeRepository.GetIngredientsByIdsAsync(ingredientIds);
+		}
+
+		public string MakePrompt(List<Ingredient> ingredients)
         {
             string prompt = "Generate me a recipe that i could use if i only have: ";
             foreach (var ingredient in ingredients)
@@ -78,5 +83,7 @@ namespace ReceptAI.Infrastructure
 
             return recipe;
         }
+
+
     }
 }

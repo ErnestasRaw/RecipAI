@@ -19,8 +19,14 @@ namespace ReceptAI.Infrastructure
 
         public async Task RegisterUserAsync(User user)
         {
-            await _context.Users.AddAsync(user);
-            await _context.SaveChangesAsync();
-        }
+			bool userExists = await _context.Users.AnyAsync(u => u.Username == user.Username || u.Email == user.Email);
+			if (userExists)
+			{
+				throw new InvalidOperationException("User with the same username or email already exists.");
+			}
+
+			await _context.Users.AddAsync(user);
+			await _context.SaveChangesAsync();
+		}
     }
 }

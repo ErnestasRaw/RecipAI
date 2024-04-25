@@ -55,5 +55,12 @@ namespace ReceptAI.Infrastructure
                           .Where(ingredient => ingredient.CategoryId == category)
                           .ToListAsync();
         }
+
+        public async Task<IEnumerable<Ingredient>> GetIngredientsByIdsAsync(List<int> ingredientIds)
+        {
+			return await _context.Ingredients
+						  .Where(ingredient => ingredientIds.Contains(ingredient.IngredientId))
+						  .ToListAsync();
+		}
     }
 }
