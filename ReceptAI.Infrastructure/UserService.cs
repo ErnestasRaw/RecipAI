@@ -17,7 +17,7 @@ namespace ReceptAI.Infrastructure
             return await _userRepository.LoginUserAsync(username, password);
         }
 
-        public async Task RegisterUserAsync(User user)
+        public async Task RegisterUserAsync(UserRegisterDTO user)
         {
            await _userRepository.RegisterUserAsync(user);
         }

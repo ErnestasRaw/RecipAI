@@ -4,7 +4,7 @@ namespace ReceptAI.Core.Interfaces
 {
     public interface IUserRepository
     {
-        Task RegisterUserAsync(User user);
+        Task RegisterUserAsync(UserRegisterDTO user);
         Task<User> LoginUserAsync(string username, string password);
 
     }

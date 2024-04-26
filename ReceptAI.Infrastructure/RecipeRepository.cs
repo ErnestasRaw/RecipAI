@@ -15,7 +15,12 @@ namespace ReceptAI.Infrastructure
 
         public async Task<IEnumerable<Recipe>> GetFavouriteRecipesIdAsync(int userId)
         {
-            return await _context.Recipes
+			if (userId <= 0)
+			{
+				throw new ArgumentException("Invalid user ID.");
+			}
+
+			return await _context.Recipes
                         .Where(r => r.UserId == userId)
                         .ToListAsync();
         }
@@ -28,36 +33,59 @@ namespace ReceptAI.Infrastructure
 
         public async Task AddRecipeToFavouriteAsync(int userId, int recipeId)
         {
-            var recipe = await _context.Recipes.FindAsync(recipeId);
+			var recipe = await _context.Recipes.FindAsync(recipeId);
+			if (recipe == null)
+			{
+				throw new ArgumentException("Recipe not found.");
+			}
 
-            if (recipe != null)
-            {           
-                recipe.UserId = userId;
-                await _context.SaveChangesAsync();
-            }
-        }
+			var existingFavourite = await _context.Recipes
+										.AnyAsync(r => r.RecipeId == recipeId && r.UserId == userId);
+			if (existingFavourite)
+			{
+				throw new InvalidOperationException("Recipe is already marked as favourite.");
+			}
+
+			recipe.UserId = userId;
+			await _context.SaveChangesAsync();
+		}
 
         public async Task DeleteFavouriteRecipeAsync(int id)
         {
-            var recipe = await _context.Recipes.Where(x => x.RecipeId == id).FirstOrDefaultAsync();
+			if (id <= 0)
+			{
+				throw new ArgumentException("Invalid recipe ID.");
+			}
 
-            if (recipe != null)
-            {
-                _context.Recipes.Remove(recipe);
+			var recipe = await _context.Recipes.Where(x => x.RecipeId == id).FirstOrDefaultAsync();
+			if (recipe == null)
+			{
+				throw new KeyNotFoundException("Recipe not found for deletion.");
+			}
 
-                await _context.SaveChangesAsync();
-            }
-        }
+			_context.Recipes.Remove(recipe);
+			await _context.SaveChangesAsync();
+		}
 
         public async Task<IEnumerable<Ingredient>> GetIngredientsAsync(FoodCategory category)
         {
-            return await _context.Ingredients
+			if (category == null)
+			{
+				throw new ArgumentNullException(nameof(category));
+			}
+
+			return await _context.Ingredients
                           .Where(ingredient => ingredient.CategoryId == category)
                           .ToListAsync();
         }
 
         public async Task<IEnumerable<Ingredient>> GetIngredientsByIdsAsync(List<int> ingredientIds)
         {
+			if (ingredientIds == null || !ingredientIds.Any())
+			{
+				throw new ArgumentException("Ingredient IDs cannot be null or empty.", nameof(ingredientIds));
+			}
+
 			return await _context.Ingredients
 						  .Where(ingredient => ingredientIds.Contains(ingredient.IngredientId))
 						  .ToListAsync();

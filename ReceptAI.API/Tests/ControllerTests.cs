@@ -126,7 +126,7 @@ namespace ReceptAi.Tests
 			// Arrange
 			var mockService = new Mock<IUserService>();
 			var controller = new UserController(mockService.Object);
-			var user = new User();
+			var user = new UserRegisterDTO();
 
 			// Act
 			var result = await controller.RegisterUser(user);
@@ -144,7 +144,7 @@ namespace ReceptAi.Tests
 			// Arrange
 			var mockService = new Mock<IUserService>();
 			var controller = new UserController(mockService.Object);
-			var user = new User();
+			var user = new UserRegisterDTO();
 
 			mockService.Setup(x => x.RegisterUserAsync(user)).ThrowsAsync(new Exception());
 

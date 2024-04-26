@@ -18,7 +18,7 @@ namespace ReceptAI.API.Controllers
 
         [HttpPost("RegisterUser")]
         [SwaggerOperation(Summary = "Registers a new user", Description = "Creates a new user account with the provided details", OperationId = "RegisterUser")]
-		public async Task<IActionResult> RegisterUser([FromBody] User user)
+		public async Task<IActionResult> RegisterUser([FromBody] UserRegisterDTO user)
 		{
 			try
 			{

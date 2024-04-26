@@ -18,6 +18,11 @@ namespace ReceptAI.Infrastructure
 
         public async Task<Recipe> GenerateRecipeAsync(List<Ingredient> ingredients)
         {
+            if (!ingredients.Any())
+            {
+				throw new ArgumentNullException(nameof(ingredients));
+			}
+
             var openAIApi = _openAiFactory.Create();
             var results = await openAIApi.Chat
                 .RequestWithUserMessage(MakePrompt(ingredients))
