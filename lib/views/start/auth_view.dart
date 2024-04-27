@@ -1,9 +1,11 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:receptai/api/user_api.dart';
 import 'package:receptai/components/theme/palette.dart';
 import 'package:receptai/components/theme/sizes.dart';
 import 'package:receptai/components/theme/styles.dart';
-import 'package:receptai/controllers/routing/navigator_utils.dart';
 import 'package:receptai/controllers/user_controller.dart';
+import 'package:receptai/helpers/logger_helper.dart';
 import 'package:receptai/helpers/xlist.dart';
 import 'package:receptai/models/user.dart';
 
@@ -15,6 +17,14 @@ class AuthView extends StatefulWidget {
 }
 
 class _AuthViewState extends State<AuthView> {
+  TextEditingController usernameControllerLogin = TextEditingController();
+  TextEditingController passwordControllerLogin = TextEditingController();
+
+  TextEditingController usernameControllerRegister = TextEditingController();
+  TextEditingController emailControllerRegister = TextEditingController();
+  TextEditingController passwordControllerRegister = TextEditingController();
+  TextEditingController passwordRepeatControllerRegister = TextEditingController();
+
   bool isLoginPage = true;
   bool rememberMe = true;
 
@@ -77,12 +87,14 @@ class _AuthViewState extends State<AuthView> {
                   style: Styles.titleAg25Semi(color: Palette.black),
                 ),
                 TextFormField(
+                  controller: usernameControllerLogin,
                   decoration: const InputDecoration(
-                    labelText: 'El. paštas',
+                    labelText: 'Vartotojo vardas',
                   ),
                   keyboardType: TextInputType.emailAddress,
                 ),
                 TextFormField(
+                  controller: passwordControllerLogin,
                   decoration: const InputDecoration(
                     labelText: 'Slaptažodis',
                   ),
@@ -105,24 +117,24 @@ class _AuthViewState extends State<AuthView> {
                   children: [
                     Expanded(
                       child: FilledButton(
-                        onPressed: () {
-                          if (isFirstAttempt) {
-                            ScaffoldMessenger.of(navigatorKey.currentContext!).showSnackBar(
+                        onPressed: () async {
+                          Response response =
+                              await UserApi.login(usernameControllerLogin.text, passwordControllerLogin.text);
+                          if (response.statusCode == 200 && response.data['success'] == true) {
+                            xlog('Login response: ${response.data}');
+                            UserController().login(User.fromJson(response.data['data']));
+                            ScaffoldMessenger.of(context).showSnackBar(
                               const SnackBar(
-                                content: Text('Neteisingi prisijungimo duomenys.'),
+                                content: Text('Prisijungimas sėkmingas'),
                               ),
                             );
-
-                            isFirstAttempt = false;
-                            return;
+                          } else {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text('Prisijungimas nesėkmingas'),
+                              ),
+                            );
                           }
-                          UserController().login(User(
-                            userId: 1,
-                            name: 'Vardenis',
-                            surname: 'Pavardenis',
-                            email: 'vardenis.pavardenis@vgtu.lt',
-                            username: 'VardenisUser',
-                          ));
                         },
                         child: const Text('Prisijungti'),
                       ),
@@ -151,44 +163,64 @@ class _AuthViewState extends State<AuthView> {
                   decoration: const InputDecoration(
                     labelText: 'Vartotojo vardas',
                   ),
-                  keyboardType: TextInputType.emailAddress,
-                ),
-                TextFormField(
-                  decoration: const InputDecoration(
-                    labelText: 'Vardas Pavardė',
-                  ),
+                  controller: usernameControllerRegister,
                   keyboardType: TextInputType.emailAddress,
                 ),
                 TextFormField(
                   decoration: const InputDecoration(
                     labelText: 'El. paštas',
                   ),
+                  controller: emailControllerRegister,
                   keyboardType: TextInputType.emailAddress,
                 ),
                 TextFormField(
                   decoration: const InputDecoration(
                     labelText: 'Slaptažodis',
                   ),
+                  controller: passwordControllerRegister,
                   obscureText: true,
                 ),
                 TextFormField(
                   decoration: const InputDecoration(
                     labelText: 'Pakartokite slaptažodį',
                   ),
+                  controller: passwordRepeatControllerRegister,
                   obscureText: true,
                 ),
                 Row(
                   children: [
                     Expanded(
                       child: FilledButton(
-                        onPressed: () {
-                          UserController().login(User(
-                            userId: 1,
-                            name: 'Vardenis',
-                            surname: 'Pavardenis',
-                            email: 'vardenis.pavardenis@vgtu.lt',
-                            username: 'VardenisUser',
-                          ));
+                        onPressed: () async {
+                          if (passwordControllerRegister.text == passwordRepeatControllerRegister.text) {
+                            Response response = await UserApi.register(
+                              usernameControllerRegister.text,
+                              emailControllerRegister.text,
+                              passwordControllerRegister.text,
+                            );
+                            if (response.statusCode == 200) {
+                              if (response.data['success'] == true) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    content: Text('Registracija sėkminga'),
+                                  ),
+                                );
+                                changePage();
+                              } else {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    content: Text('Registracija nesėkminga'),
+                                  ),
+                                );
+                              }
+                            } else {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text('Registracija nesėkminga'),
+                                ),
+                              );
+                            }
+                          }
                         },
                         child: const Text('Registruotis'),
                       ),

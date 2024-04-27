@@ -1,11 +1,8 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:receptai/components/theme/palette.dart';
-import 'package:receptai/components/theme/sizes.dart';
 import 'package:receptai/controllers/routing/navigator_utils.dart';
 import 'package:receptai/controllers/user_controller.dart';
 import 'package:receptai/dev_view.dart';
-import 'package:receptai/helpers/xlist.dart';
 
 class AppDrawer extends StatelessWidget {
   const AppDrawer({Key? key}) : super(key: key);
@@ -36,27 +33,14 @@ class AppDrawer extends StatelessWidget {
                       ),
                       Flexible(
                         fit: FlexFit.loose,
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              UserController().loggedInUser?.name ?? '',
-                              style: const TextStyle(
-                                color: Colors.white,
-                                fontSize: 20,
-                              ),
-                              softWrap: true,
-                              overflow: TextOverflow.fade,
-                            ),
-                            Text(
-                              UserController().loggedInUser?.surname ?? '',
-                              style: const TextStyle(
-                                color: Colors.white,
-                                fontSize: 20,
-                              ),
-                            ),
-                          ].addSpacing(Sizes.spacingSmall),
+                        child: Text(
+                          UserController().loggedInUser?.username ?? '',
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 20,
+                          ),
+                          softWrap: true,
+                          overflow: TextOverflow.fade,
                         ),
                       ),
                     ],
@@ -64,6 +48,12 @@ class AppDrawer extends StatelessWidget {
                 ),
               ],
             ),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              pushMaterial(context, (context) => DevView());
+            },
+            child: Text('devmode'),
           ),
           const Expanded(child: SizedBox()),
           ListTile(

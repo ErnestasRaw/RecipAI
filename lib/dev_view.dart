@@ -1,5 +1,7 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
+import 'package:receptai/api/recipe_api.dart';
+import 'package:receptai/helpers/logger_helper.dart';
 
 class DevView extends StatefulWidget {
   const DevView({super.key});
@@ -20,13 +22,8 @@ class _DevViewState extends State<DevView> {
           const Text('Dev View'),
           ElevatedButton(
             onPressed: () async {
-              http.Response response = await http.get(
-                Uri.parse('http://192.168.1.117:5041/Recipe/GetAllFavouriteRecipes/1'),
-                headers: {
-                  'accept': 'text/plain',
-                },
-              );
-              print(response.body);
+              Response response = await RecipeApi.getIngredients(2);
+              xlog("Data: ${response.data}");
             },
             child: const Text('API test 1'),
           ),
