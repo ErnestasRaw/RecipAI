@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:receptai/api/recipe_api.dart';
 import 'package:receptai/components/theme/palette.dart';
 import 'package:receptai/components/theme/styles.dart';
+import 'package:receptai/controllers/user_controller.dart';
 import 'package:receptai/models/recipe.dart';
 
 class GeneratorDialog {
   static Future<void> show(
     BuildContext context, {
-    bool? hasRegenrateButton = true,
     required Recipe recipe,
+    Future Function()? onRegenerate,
   }) async {
     bool isFavorite = false;
     return showDialog<void>(
@@ -22,7 +24,12 @@ class GeneratorDialog {
                 recipe.ingredients.toString(),
                 style: Styles.ag16Medium(),
               ),
-              Text(recipe.instructions),
+              SizedBox(
+                height: 160,
+                child: SingleChildScrollView(
+                  child: Text(recipe.instructions),
+                ),
+              ),
             ],
           ),
           actionsAlignment: MainAxisAlignment.spaceBetween,
@@ -30,10 +37,22 @@ class GeneratorDialog {
             StatefulBuilder(
               builder: (context, setState) {
                 return IconButton(
-                  onPressed: () {
-                    setState(() {
+                  onPressed: () async {
+                    if (isFavorite == false) {
+                      await RecipeApi.addRecipeToFavourite(
+                        UserController().loggedInUser!.userId,
+                        recipe.recipeId,
+                      );
                       isFavorite = !isFavorite;
-                    });
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text('Receptas jau yra įtrauktas į mėgstamiausių sąrašą.'),
+                          duration: Duration(seconds: 2),
+                        ),
+                      );
+                    }
+                    setState(() {});
                   },
                   icon: Icon(
                     !isFavorite ? Icons.favorite_border : Icons.favorite,
@@ -42,19 +61,15 @@ class GeneratorDialog {
                 );
               },
             ),
-            if (hasRegenrateButton!)
+            if (onRegenerate != null)
               IconButton(
                 icon: const Icon(Icons.refresh),
-                onPressed: () {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('Receptas atnaujintas'),
-                    ),
-                  );
+                onPressed: () async {
+                  await onRegenerate();
                 },
               ),
             FilledButton(
-              child: Text('Atgal'),
+              child: const Text('Atgal'),
               onPressed: () {
                 Navigator.of(context).pop();
               },

@@ -36,6 +36,48 @@ class _GeneratorPageState extends State<GeneratorPage> {
     setState(() {});
   }
 
+  Future<void> onGeneratePressed() async {
+    Response response = await RecipeApi.generateRecipe(
+      generatorController.selectedIngredients,
+    );
+    Recipe recipe = Recipe.fromJson(response.data['data']);
+    if (response.data['data'] != null) {
+      await GeneratorDialog.show(
+        context,
+        recipe: Recipe.fromJson(response.data['data']),
+        onRegenerate: () async {
+          Response response = await RecipeApi.generateRecipe(
+            generatorController.selectedIngredients,
+          );
+          try {
+            Recipe recipe = Recipe.fromJson(response.data['data']);
+          } catch (e) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('Nepavyko sugeneruoti recepto.'),
+              ),
+            );
+          }
+          if (recipe.recipeId != null) {
+            await GeneratorDialog.show(
+              context,
+              recipe: recipe,
+              onRegenerate: () async {
+                Navigator.pop(context);
+              },
+            );
+          }
+        },
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Nepavyko sugeneruoti recepto'),
+        ),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -99,31 +141,7 @@ class _GeneratorPageState extends State<GeneratorPage> {
                     Expanded(
                       child: FilledButton.icon(
                         onPressed: () async {
-                          if (generatorController.selectedIngredients.isEmpty) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text('Pasirinkite ingredientus'),
-                              ),
-                            );
-                            return;
-                          }
-                          Response response = await RecipeApi.generateRecipe(
-                            generatorController.selectedIngredients,
-                          );
-                          Recipe recipe = Recipe.fromJson(response.data['data']);
-                          if (response.data['data'] != null) {
-                            await GeneratorDialog.show(
-                              context,
-                              recipe: Recipe.fromJson(response.data['data']),
-                              hasRegenrateButton: true,
-                            );
-                          } else {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text('Nepavyko sugeneruoti recepto'),
-                              ),
-                            );
-                          }
+                          await onGeneratePressed();
                         },
                         icon: const Icon(Icons.generating_tokens),
                         label: const Text('Generuoti'),
@@ -133,7 +151,9 @@ class _GeneratorPageState extends State<GeneratorPage> {
                 ),
               ],
             )
-          : Center(child: const CircularProgressIndicator()),
+          : const Center(
+              child: CircularProgressIndicator(),
+            ),
     );
   }
 }
