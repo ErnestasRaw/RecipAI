@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:receptai/helpers/logger_helper.dart';
 
 final dio = Dio();
 
@@ -32,10 +33,17 @@ class RecipeApi {
   }
 
   static Future<Response> getAllFavouriteRecipes(int userId) async {
+    xlog('userId: $userId');
     try {
       final response = await dio.get(
         'https://10.0.2.2:7012/Recipe/GetAllFavouriteRecipes/$userId',
+        options: Options(
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        ),
       );
+      xlog('returning response: ${response.data}');
       return response;
     } catch (e) {
       rethrow;
