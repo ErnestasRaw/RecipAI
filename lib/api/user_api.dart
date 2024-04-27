@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:receptai/globals.dart';
 
 final dio = Dio();
 
@@ -6,7 +7,7 @@ class UserApi {
   static Future<Response> register(String username, String password, String email) async {
     try {
       final response = await dio.post(
-        'https://10.0.2.2:7012/User/RegisterUser',
+        'https://$baseUrl/User/RegisterUser',
         data: {
           'username': username,
           'password': password,
@@ -27,7 +28,7 @@ class UserApi {
   static Future<Response> login(String username, String password) async {
     try {
       final response = await dio.post(
-        'https://10.0.2.2:7012/User/LoginUser',
+        'https://$baseUrl/User/LoginUser',
         data: {'username': username, 'password': password},
         options: Options(
           headers: {

@@ -1,12 +1,12 @@
 import 'package:dio/dio.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
+import 'package:receptai/api/recipe_api.dart';
 import 'package:receptai/models/category_enum.dart';
 import 'package:receptai/models/ingredient.dart';
 
-import '../../../../api/recipe_api.dart';
-
 class GeneratorController extends ChangeNotifier {
-  GeneratorController();
+  final RecipeApi recipeApi;
+  GeneratorController({RecipeApi? recipeApi}) : recipeApi = recipeApi ?? RecipeApi();
 
   ProductCategory _selectedCategory = ProductCategory.values.last;
   ProductCategory get selectedCategory => _selectedCategory;
