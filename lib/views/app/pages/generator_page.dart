@@ -46,27 +46,8 @@ class _GeneratorPageState extends State<GeneratorPage> {
         context,
         recipe: Recipe.fromJson(response.data['data']),
         onRegenerate: () async {
-          Response response = await RecipeApi.generateRecipe(
-            generatorController.selectedIngredients,
-          );
-          try {
-            Recipe recipe = Recipe.fromJson(response.data['data']);
-          } catch (e) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text('Nepavyko sugeneruoti recepto.'),
-              ),
-            );
-          }
-          if (recipe.recipeId != null) {
-            await GeneratorDialog.show(
-              context,
-              recipe: recipe,
-              onRegenerate: () async {
-                Navigator.pop(context);
-              },
-            );
-          }
+          Navigator.pop(context);
+          await onGeneratePressed();
         },
       );
     } else {

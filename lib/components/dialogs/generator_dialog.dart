@@ -10,8 +10,8 @@ class GeneratorDialog {
     BuildContext context, {
     required Recipe recipe,
     Future Function()? onRegenerate,
+    bool isFavorite = false,
   }) async {
-    bool isFavorite = false;
     return showDialog<void>(
       context: context,
       builder: (BuildContext context) {
