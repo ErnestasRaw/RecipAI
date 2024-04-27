@@ -23,23 +23,26 @@ namespace ReceptAi.Tests
 			// Arrange
 			var mockService = new Mock<IRecipeService>();
 			var controller = new RecipeController(mockService.Object);
-			var ingredients = new List<Ingredient>();
 			var ingredientIds = new List<int>(); // Add this line to match the controller method signature
 
 			var expectedRecipe = new Recipe(); // Assume your service method returns a Recipe object
-			mockService.Setup(x => x.GenerateRecipeAsync(ingredients)).ReturnsAsync(expectedRecipe);
+			var ingredients = new List<Ingredient>(); // This is the list of ingredients that should be returned by GetIngredientsByIdsAsync
 
+			mockService.Setup(x => x.GetIngredientsByIdsAsync(ingredientIds)).ReturnsAsync(ingredients);
+			mockService.Setup(x => x.GenerateRecipeAsync(ingredients)).ReturnsAsync(expectedRecipe);
 
 			// Act
 			var result = await controller.GenerateRecipe(ingredientIds);
 
 			// Assert
-			Assert.IsType<OkObjectResult>(result); // Assert it's an OkObjectResult
+			var okResult = Assert.IsType<OkObjectResult>(result); // Assert it's an OkObjectResult
 
-			var okResult = result as OkObjectResult;
-			var actualRecipe = Assert.IsType<Recipe>(okResult.Value); // Extract the Recipe object and assert its type
+			var responseWrapper = Assert.IsType<ResponseWrapper<Recipe>>(okResult.Value); // Extract the ResponseWrapper object and assert its type
+			var actualRecipe = responseWrapper.Data; // Extract the Recipe object from the ResponseWrapper
+
 			Assert.Equal(expectedRecipe, actualRecipe); // Optionally, assert more details as needed
 		}
+
 
 		[Fact]
 		public async Task GenerateRecipe_Returns_BadRequest_OnException()
@@ -112,12 +115,14 @@ namespace ReceptAi.Tests
 			var result = await controller.GetIngredients(categoryId);
 
 			// Assert
-			Assert.IsType<OkObjectResult>(result); // Assert it's an OkObjectResult
+			var okResult = Assert.IsType<OkObjectResult>(result); // Assert it's an OkObjectResult
 
-			var okResult = result as OkObjectResult;
-			var actualIngredients = Assert.IsType<IEnumerable<Ingredient>>(okResult.Value); // Extract the ingredient list and assert its type
+			var responseWrapper = Assert.IsType<ResponseWrapper<IEnumerable<Ingredient>>>(okResult.Value); // Extract the ResponseWrapper object and assert its type
+			var actualIngredients = responseWrapper.Data; // Extract the ingredient list from the ResponseWrapper
+
 			Assert.Equal(expectedIngredients, actualIngredients); // Optionally, assert more details as needed
 		}
+
 
 
 		[Fact]
@@ -171,13 +176,15 @@ namespace ReceptAi.Tests
 			var result = await controller.LoginUser(userLoginDTO);
 
 			// Assert
-			Assert.IsType<OkObjectResult>(result); // Assert it's an OkObjectResult
+			var okResult = Assert.IsType<OkObjectResult>(result); // Assert it's an OkObjectResult
 
-			var okResult = result as OkObjectResult;
-			var actualUser = Assert.IsType<User>(okResult.Value); // Extract the User object and assert its type
+			var responseWrapper = Assert.IsType<ResponseWrapper<User>>(okResult.Value); // Extract the ResponseWrapper object and assert its type
+			var actualUser = responseWrapper.Data; // Extract the User object from the ResponseWrapper
+
 			Assert.Equal(expectedUser.Username, actualUser.Username); // Optionally, assert more details as needed
 			Assert.Equal(expectedUser.Password, actualUser.Password); // Only assert password if hashing is not used
 		}
+
 
 		[Fact]
 		public async Task LoginUser_Returns_Unauthorized_OnInvalidCredentials()

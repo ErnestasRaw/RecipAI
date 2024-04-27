@@ -22,6 +22,11 @@ namespace ReceptAi.Controllers
 		{
 			try
 			{
+				if (ingredientIds.Any(id => id < 0))
+				{
+					return BadRequest(new ResponseWrapper<Recipe>(null, false));
+				}
+
 				var ingredients = (List<Ingredient>)await _recipeService.GetIngredientsByIdsAsync(ingredientIds);
 				var recipe = await _recipeService.GenerateRecipeAsync(ingredients);
 				return Ok(new ResponseWrapper<Recipe>(recipe));
