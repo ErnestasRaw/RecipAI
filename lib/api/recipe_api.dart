@@ -1,5 +1,4 @@
 import 'package:dio/dio.dart';
-import 'package:receptai/globals.dart';
 import 'package:receptai/helpers/logger_helper.dart';
 
 final dio = Dio();
@@ -8,7 +7,7 @@ class RecipeApi {
   static Future<Response> generateRecipe(List<int> ingredientIds) async {
     try {
       final response = await dio.post(
-        'https://$baseUrl/Recipe/GenerateRecipe',
+        'https://10.0.2.2:7012/Recipe/GenerateRecipe',
         data: ingredientIds,
         options: Options(
           headers: {
@@ -25,7 +24,7 @@ class RecipeApi {
   static Future<Response> addRecipeToFavourite(int userId, int recipeId) async {
     try {
       final response = await dio.post(
-        'https://$baseUrl/Recipe/AddRecipeToFavourite/$userId/$recipeId',
+        'https://10.0.2.2:7012/Recipe/AddRecipeToFavourite/$userId/$recipeId',
       );
       return response;
     } catch (e) {
@@ -37,7 +36,7 @@ class RecipeApi {
     xlog('userId: $userId');
     try {
       final response = await dio.get(
-        'https://$baseUrl/Recipe/GetAllFavouriteRecipes/$userId',
+        'https://10.0.2.2:7012/Recipe/GetAllFavouriteRecipes/$userId',
         options: Options(
           headers: {
             'Content-Type': 'application/json',
@@ -54,7 +53,7 @@ class RecipeApi {
   static Future<Response> deleteFavouriteRecipe(int recipeId) async {
     try {
       final response = await dio.delete(
-        'https://$baseUrl/Recipe/DeleteFavouriteRecipe/$recipeId',
+        'https://10.0.2.2:7012/Recipe/DeleteFavouriteRecipe/$recipeId',
       );
       return response;
     } catch (e) {
@@ -65,7 +64,7 @@ class RecipeApi {
   static Future<Response> getIngredients(int categoryId) async {
     try {
       final response = await dio.get(
-        'https://$baseUrl/Recipe/GetIngredients/$categoryId',
+        'https://10.0.2.2:7012/Recipe/GetIngredients/$categoryId',
       );
       return response;
     } catch (e) {

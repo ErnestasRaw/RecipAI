@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:receptai/components/theme/palette.dart';
-import 'package:receptai/controllers/routing/navigator_utils.dart';
 import 'package:receptai/controllers/user_controller.dart';
-import 'package:receptai/dev_view.dart';
 
 class AppDrawer extends StatelessWidget {
   const AppDrawer({Key? key}) : super(key: key);
@@ -49,12 +47,12 @@ class AppDrawer extends StatelessWidget {
               ],
             ),
           ),
-          ElevatedButton(
-            onPressed: () {
-              pushMaterial(context, (context) => DevView());
-            },
-            child: Text('devmode'),
-          ),
+          // ElevatedButton(
+          //   onPressed: () {
+          //     pushMaterial(context, (context) => DevView());
+          //   },
+          //   child: Text('devmode'),
+          // ),
           const Expanded(child: SizedBox()),
           ListTile(
             leading: const Icon(Icons.logout),

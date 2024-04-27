@@ -79,133 +79,141 @@ class _AuthViewState extends State<AuthView> {
         color: Palette.white,
         borderRadius: BorderRadius.circular(20),
       ),
-      child: isLoginPage == true
-          ? Column(
-              children: [
-                Text(
-                  'Prisijungimas',
-                  style: Styles.titleAg25Semi(color: Palette.black),
-                ),
-                TextFormField(
-                  controller: usernameControllerLogin,
-                  decoration: const InputDecoration(
-                    labelText: 'Vartotojo vardas',
+      child: SingleChildScrollView(
+        child: isLoginPage == true
+            ? Column(
+                children: [
+                  Text(
+                    'Prisijungimas',
+                    style: Styles.titleAg25Semi(color: Palette.black),
                   ),
-                  keyboardType: TextInputType.emailAddress,
-                ),
-                TextFormField(
-                  controller: passwordControllerLogin,
-                  decoration: const InputDecoration(
-                    labelText: 'Slaptažodis',
-                  ),
-                  obscureText: true,
-                ),
-                Row(
-                  children: [
-                    Checkbox(
-                      value: rememberMe,
-                      onChanged: (value) {
-                        setState(() {
-                          rememberMe = value ?? false;
-                        });
-                      },
+                  TextFormField(
+                    controller: usernameControllerLogin,
+                    decoration: const InputDecoration(
+                      labelText: 'Vartotojo vardas',
                     ),
-                    const Text('Prisiminti mane'),
-                  ],
-                ),
-                Row(
-                  children: [
-                    Expanded(
-                      child: FilledButton(
-                        onPressed: () async {
-                          Response response =
-                              await UserApi.login(usernameControllerLogin.text, passwordControllerLogin.text);
-                          if (response.statusCode == 200 && response.data['success'] == true) {
-                            xlog('Login response: ${response.data}');
-                            UserController().login(User.fromJson(response.data['data']));
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text('Prisijungimas sėkmingas'),
-                              ),
-                            );
-                          } else {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text('Prisijungimas nesėkmingas'),
-                              ),
-                            );
-                          }
+                    keyboardType: TextInputType.emailAddress,
+                  ),
+                  TextFormField(
+                    controller: passwordControllerLogin,
+                    decoration: const InputDecoration(
+                      labelText: 'Slaptažodis',
+                    ),
+                    obscureText: true,
+                  ),
+                  Row(
+                    children: [
+                      Checkbox(
+                        value: rememberMe,
+                        onChanged: (value) {
+                          setState(() {
+                            rememberMe = value ?? false;
+                          });
                         },
-                        child: const Text('Prisijungti'),
                       ),
-                    ),
-                  ],
-                ),
-                Row(
-                  children: [
-                    Expanded(
-                      child: ElevatedButton(
-                        onPressed: changePage,
-                        child: const Text('Registruotis'),
+                      const Text('Prisiminti mane'),
+                    ],
+                  ),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: FilledButton(
+                          onPressed: () async {
+                            Response response =
+                                await UserApi.login(usernameControllerLogin.text, passwordControllerLogin.text);
+                            if (response.statusCode == 200 && response.data['success'] == true) {
+                              xlog('Login response: ${response.data}');
+                              UserController().login(User.fromJson(response.data['data']));
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text('Prisijungimas sėkmingas'),
+                                ),
+                              );
+                            } else {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text('Prisijungimas nesėkmingas'),
+                                ),
+                              );
+                            }
+                          },
+                          child: const Text('Prisijungti'),
+                        ),
                       ),
+                    ],
+                  ),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: ElevatedButton(
+                          onPressed: changePage,
+                          child: const Text('Registruotis'),
+                        ),
+                      ),
+                    ],
+                  )
+                ].addSpacing(Sizes.spacingSmall),
+              )
+            : Column(
+                children: [
+                  Text(
+                    'Registracija',
+                    style: Styles.titleAg25Semi(color: Palette.black),
+                  ),
+                  TextFormField(
+                    decoration: const InputDecoration(
+                      labelText: 'Vartotojo vardas',
                     ),
-                  ],
-                )
-              ].addSpacing(Sizes.spacingSmall),
-            )
-          : Column(
-              children: [
-                Text(
-                  'Registracija',
-                  style: Styles.titleAg25Semi(color: Palette.black),
-                ),
-                TextFormField(
-                  decoration: const InputDecoration(
-                    labelText: 'Vartotojo vardas',
+                    controller: usernameControllerRegister,
+                    keyboardType: TextInputType.emailAddress,
                   ),
-                  controller: usernameControllerRegister,
-                  keyboardType: TextInputType.emailAddress,
-                ),
-                TextFormField(
-                  decoration: const InputDecoration(
-                    labelText: 'El. paštas',
+                  TextFormField(
+                    decoration: const InputDecoration(
+                      labelText: 'El. paštas',
+                    ),
+                    controller: emailControllerRegister,
+                    keyboardType: TextInputType.emailAddress,
                   ),
-                  controller: emailControllerRegister,
-                  keyboardType: TextInputType.emailAddress,
-                ),
-                TextFormField(
-                  decoration: const InputDecoration(
-                    labelText: 'Slaptažodis',
+                  TextFormField(
+                    decoration: const InputDecoration(
+                      labelText: 'Slaptažodis',
+                    ),
+                    controller: passwordControllerRegister,
+                    obscureText: true,
                   ),
-                  controller: passwordControllerRegister,
-                  obscureText: true,
-                ),
-                TextFormField(
-                  decoration: const InputDecoration(
-                    labelText: 'Pakartokite slaptažodį',
+                  TextFormField(
+                    decoration: const InputDecoration(
+                      labelText: 'Pakartokite slaptažodį',
+                    ),
+                    controller: passwordRepeatControllerRegister,
+                    obscureText: true,
                   ),
-                  controller: passwordRepeatControllerRegister,
-                  obscureText: true,
-                ),
-                Row(
-                  children: [
-                    Expanded(
-                      child: FilledButton(
-                        onPressed: () async {
-                          if (passwordControllerRegister.text == passwordRepeatControllerRegister.text) {
-                            Response response = await UserApi.register(
-                              usernameControllerRegister.text,
-                              emailControllerRegister.text,
-                              passwordControllerRegister.text,
-                            );
-                            if (response.statusCode == 200) {
-                              if (response.data['success'] == true) {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                    content: Text('Registracija sėkminga'),
-                                  ),
-                                );
-                                changePage();
+                  Row(
+                    children: [
+                      Expanded(
+                        child: FilledButton(
+                          onPressed: () async {
+                            if (passwordControllerRegister.text == passwordRepeatControllerRegister.text) {
+                              Response response = await UserApi.register(
+                                usernameControllerRegister.text,
+                                emailControllerRegister.text,
+                                passwordControllerRegister.text,
+                              );
+                              if (response.statusCode == 200) {
+                                if (response.data['success'] == true) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                      content: Text('Registracija sėkminga'),
+                                    ),
+                                  );
+                                  changePage();
+                                } else {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                      content: Text('Registracija nesėkminga'),
+                                    ),
+                                  );
+                                }
                               } else {
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   const SnackBar(
@@ -213,32 +221,26 @@ class _AuthViewState extends State<AuthView> {
                                   ),
                                 );
                               }
-                            } else {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                  content: Text('Registracija nesėkminga'),
-                                ),
-                              );
                             }
-                          }
-                        },
-                        child: const Text('Registruotis'),
+                          },
+                          child: const Text('Registruotis'),
+                        ),
                       ),
-                    ),
-                  ],
-                ),
-                Row(
-                  children: [
-                    Expanded(
-                      child: ElevatedButton(
-                        onPressed: changePage,
-                        child: const Text('Prisijungti'),
+                    ],
+                  ),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: ElevatedButton(
+                          onPressed: changePage,
+                          child: const Text('Prisijungti'),
+                        ),
                       ),
-                    ),
-                  ],
-                ),
-              ].addSpacing(Sizes.spacingSmall),
-            ),
+                    ],
+                  ),
+                ].addSpacing(Sizes.spacingSmall),
+              ),
+      ),
     );
   }
 }
