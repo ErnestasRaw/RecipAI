@@ -2,20 +2,20 @@ class Recipe {
   int recipeId;
   String name;
   String instructions;
-  List<String>? ingredients;
+  String ingredients;
 
   Recipe({
     required this.recipeId,
     required this.name,
     required this.instructions,
-    this.ingredients,
+    required this.ingredients,
   });
 
   factory Recipe.fromJson(Map<String, dynamic> json) => Recipe(
         recipeId: json['recipeId'],
         name: json['name'],
         instructions: json['instructions'],
-        ingredients: json['ingredients'] != null ? List<String>.from(json['ingredients'].map((x) => x)) : null,
+        ingredients: json['ingredients'],
       );
 
   Map<String, dynamic> toJson() {
@@ -23,9 +23,8 @@ class Recipe {
     data['recipeId'] = recipeId;
     data['name'] = name;
     data['instructions'] = instructions;
-    if (ingredients != null) {
-      data['ingredients'] = ingredients!.map((x) => x).toList();
-    }
+    data['ingredients'] = ingredients;
+
     return data;
   }
 }

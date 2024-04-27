@@ -1,0 +1,66 @@
+import 'package:dio/dio.dart';
+
+final dio = Dio();
+
+class RecipeApi {
+  static Future<Response> generateRecipe(List<int> ingredientIds) async {
+    try {
+      final response = await dio.post(
+        'https://10.0.2.2:7012/Recipe/GenerateRecipe',
+        data: ingredientIds,
+        options: Options(
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        ),
+      );
+      return response;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  static Future<Response> addRecipeToFavourite(int userId, int recipeId) async {
+    try {
+      final response = await dio.post(
+        'https://10.0.2.2:7012/Recipe/AddRecipeToFavourite/$userId/$recipeId',
+      );
+      return response;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  static Future<Response> getAllFavouriteRecipes(int userId) async {
+    try {
+      final response = await dio.get(
+        'https://10.0.2.2:7012/Recipe/GetAllFavouriteRecipes/$userId',
+      );
+      return response;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  static Future<Response> deleteFavouriteRecipe(int recipeId) async {
+    try {
+      final response = await dio.delete(
+        'https://10.0.2.2:7012/Recipe/DeleteFavouriteRecipe/$recipeId',
+      );
+      return response;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  static Future<Response> getIngredients(int categoryId) async {
+    try {
+      final response = await dio.get(
+        'https://10.0.2.2:7012/Recipe/GetIngredients/$categoryId',
+      );
+      return response;
+    } catch (e) {
+      rethrow;
+    }
+  }
+}

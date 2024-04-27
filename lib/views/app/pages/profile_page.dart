@@ -29,41 +29,17 @@ class _ProfilePageState extends State<ProfilePage> {
                   color: Palette.seedColor,
                 ),
                 Text(
-                  UserController().loggedInUser!.fullName,
+                  UserController().loggedInUser!.username,
                   style: Styles.titleAg25Semi(color: Palette.seedColor),
                 ),
                 Text(
                   UserController().loggedInUser!.email,
                   style: Styles.ag16Medium(),
                 ),
-                Text(
-                  UserController().loggedInUser!.username,
-                  style: Styles.ag16Medium(),
-                )
               ].addSpacing(Sizes.spacingTiny),
             ),
           ),
           const Expanded(child: SizedBox()),
-          Align(
-            alignment: Alignment.bottomCenter,
-            child: Column(
-              children: [
-                Row(
-                  children: [
-                    Expanded(
-                      child: FilledButton.icon(
-                        onPressed: () {},
-                        icon: const Icon(Icons.edit),
-                        label: const Text(
-                          'Keisti slaptažodį',
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
         ],
       ),
     );

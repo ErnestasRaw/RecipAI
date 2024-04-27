@@ -1,7 +1,10 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:receptai/api/recipe_api.dart';
 import 'package:receptai/components/dialogs/generator_dialog.dart';
 import 'package:receptai/components/theme/sizes.dart';
 import 'package:receptai/models/category_enum.dart';
+import 'package:receptai/models/recipe.dart';
 import 'package:receptai/views/app/pages/controllers/generator_controller.dart';
 
 class GeneratorPage extends StatefulWidget {
@@ -13,81 +16,124 @@ class GeneratorPage extends StatefulWidget {
 
 class _GeneratorPageState extends State<GeneratorPage> {
   final GeneratorController generatorController = GeneratorController();
+  bool isFetched = false;
 
-  onCategoryChange(ProductCategory? value) {
+  Future<void> init() async {
+    await generatorController.fetchIngredients();
     setState(() {
-      generatorController.selectedCategory = value!;
+      isFetched = true;
     });
+  }
+
+  @override
+  initState() {
+    super.initState();
+    init();
+  }
+
+  Future<void> onCategoryChange(ProductCategory? value) async {
+    await generatorController.onCategoryChanged(value!);
+    setState(() {});
   }
 
   @override
   Widget build(BuildContext context) {
     return Padding(
       padding: Sizes.pageMargins,
-      child: Column(
-        children: [
-          Row(
-            children: [
-              Expanded(
-                child: DropdownButton<ProductCategory>(
-                  value: generatorController.selectedCategory,
-                  onChanged: onCategoryChange,
-                  isExpanded: true,
-                  items: ProductCategory.values
-                      .map<DropdownMenuItem<ProductCategory>>(
-                        (ProductCategory value) => DropdownMenuItem<ProductCategory>(
-                          value: value,
-                          child: Text(value.label),
-                        ),
-                      )
-                      .toList(),
-                ),
-              ),
-            ],
-          ),
-          Expanded(
-            child: ListView.builder(
-              itemCount: generatorController.filteredIngredients.length,
-              itemBuilder: (context, index) {
-                return ListTile(
-                  title: Text(generatorController.filteredIngredients.elementAt(index).name),
-                  trailing: Checkbox(
-                    value: generatorController.selectedIngredients.contains(
-                      generatorController.filteredIngredients.elementAt(index),
+      child: isFetched
+          ? Column(
+              children: [
+                Row(
+                  children: [
+                    Expanded(
+                      child: DropdownButton<ProductCategory>(
+                        value: generatorController.selectedCategory,
+                        onChanged: (value) async {
+                          await onCategoryChange(value);
+                        },
+                        isExpanded: true,
+                        items: ProductCategory.values
+                            .map<DropdownMenuItem<ProductCategory>>(
+                              (ProductCategory value) => DropdownMenuItem<ProductCategory>(
+                                value: value,
+                                child: Text(value.label),
+                              ),
+                            )
+                            .toList(),
+                      ),
                     ),
-                    onChanged: (bool? value) {
-                      setState(() {
-                        if (value!) {
-                          generatorController.selectedIngredients.add(
-                            generatorController.filteredIngredients.elementAt(index),
-                          );
-                        } else {
-                          generatorController.selectedIngredients.remove(
-                            generatorController.filteredIngredients.elementAt(index),
-                          );
-                        }
-                      });
-                    },
-                  ),
-                );
-              },
-            ),
-          ),
-          Row(
-            children: [
-              Expanded(
-                child: FilledButton.icon(
-                  onPressed: () {
-                    GeneratorDialog.show(context);
-                  },
-                  icon: const Icon(Icons.generating_tokens),
-                  label: const Text('Generuoti'),
+                  ],
                 ),
-              ),
-            ],
-          ),
-        ],
-      ),
+                ListenableBuilder(
+                  listenable: generatorController,
+                  builder: (context, _) => Expanded(
+                    child: ListView.builder(
+                      itemCount: generatorController.fetchedIngredients.length,
+                      itemBuilder: (context, index) {
+                        return ListTile(
+                          title: Text(generatorController.fetchedIngredients[index].name),
+                          trailing: Checkbox(
+                            value: generatorController.selectedIngredients
+                                .contains(generatorController.fetchedIngredients[index].ingredientId),
+                            onChanged: (bool? value) {
+                              setState(() {
+                                if (value!) {
+                                  generatorController.selectedIngredients.add(
+                                    generatorController.fetchedIngredients[index].ingredientId,
+                                  );
+                                } else {
+                                  generatorController.selectedIngredients.remove(
+                                    generatorController.fetchedIngredients[index].ingredientId,
+                                  );
+                                }
+                              });
+                            },
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                ),
+                Row(
+                  children: [
+                    Expanded(
+                      child: FilledButton.icon(
+                        onPressed: () async {
+                          if (generatorController.selectedIngredients.isEmpty) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text('Pasirinkite ingredientus'),
+                              ),
+                            );
+                            return;
+                          }
+                          Response response = await RecipeApi.generateRecipe(
+                            generatorController.selectedIngredients,
+                          );
+                          Recipe recipe = Recipe.fromJson(response.data['data']);
+                          if (response.data['data'] != null) {
+                            await GeneratorDialog.show(
+                              context,
+                              recipe: Recipe.fromJson(response.data['data']),
+                              hasRegenrateButton: true,
+                            );
+                          } else {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text('Nepavyko sugeneruoti recepto'),
+                              ),
+                            );
+                          }
+                        },
+                        icon: const Icon(Icons.generating_tokens),
+                        label: const Text('Generuoti'),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            )
+          : Center(child: const CircularProgressIndicator()),
     );
   }
 }
