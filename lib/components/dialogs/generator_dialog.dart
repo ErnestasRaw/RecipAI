@@ -39,7 +39,7 @@ class GeneratorDialog {
                 return IconButton(
                   onPressed: () async {
                     if (isFavorite == false) {
-                      await RecipeApi.addRecipeToFavourite(
+                      await RecipeApi().addRecipeToFavourite(
                         UserController().loggedInUser!.userId,
                         recipe.recipeId,
                       );

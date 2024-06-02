@@ -13,7 +13,7 @@ class FavoritesPage extends StatelessWidget {
   const FavoritesPage({super.key});
 
   Future<List<Recipe?>> fetchFavorites() async {
-    Response response = await RecipeApi.getAllFavouriteRecipes(UserController().loggedInUser!.userId);
+    Response response = await RecipeApi().getAllFavouriteRecipes(UserController().loggedInUser!.userId);
 
     if (response.data['data'] == null) {
       return [];

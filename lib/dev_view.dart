@@ -22,7 +22,7 @@ class _DevViewState extends State<DevView> {
           const Text('Dev View'),
           ElevatedButton(
             onPressed: () async {
-              Response response = await RecipeApi.getIngredients(2);
+              Response response = await RecipeApi().getIngredients(2);
               xlog("Data: ${response.data}");
             },
             child: const Text('API test 1'),

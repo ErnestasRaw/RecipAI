@@ -15,7 +15,7 @@ class GeneratorController extends ChangeNotifier {
   List<int> selectedIngredients = [];
 
   Future<void> fetchIngredients() async {
-    Response response = await RecipeApi.getIngredients(_selectedCategory.id);
+    Response response = await RecipeApi().getIngredients(_selectedCategory.id);
     fetchedIngredients =
         (response.data['data']).map<Ingredient>((ingredient) => Ingredient.fromJson(ingredient)).toList();
     notifyListeners();

@@ -4,7 +4,7 @@ import 'package:receptai/helpers/logger_helper.dart';
 final dio = Dio();
 
 class RecipeApi {
-  static Future<Response> generateRecipe(List<int> ingredientIds) async {
+  Future<Response> generateRecipe(List<int> ingredientIds) async {
     try {
       final response = await dio.post(
         'https://10.0.2.2:7012/Recipe/GenerateRecipe',
@@ -21,7 +21,7 @@ class RecipeApi {
     }
   }
 
-  static Future<Response> addRecipeToFavourite(int userId, int recipeId) async {
+  Future<Response> addRecipeToFavourite(int userId, int recipeId) async {
     try {
       final response = await dio.post(
         'https://10.0.2.2:7012/Recipe/AddRecipeToFavourite/$userId/$recipeId',
@@ -32,7 +32,7 @@ class RecipeApi {
     }
   }
 
-  static Future<Response> getAllFavouriteRecipes(int userId) async {
+  Future<Response> getAllFavouriteRecipes(int userId) async {
     xlog('userId: $userId');
     try {
       final response = await dio.get(
@@ -50,7 +50,7 @@ class RecipeApi {
     }
   }
 
-  static Future<Response> deleteFavouriteRecipe(int recipeId) async {
+  Future<Response> deleteFavouriteRecipe(int recipeId) async {
     try {
       final response = await dio.delete(
         'https://10.0.2.2:7012/Recipe/DeleteFavouriteRecipe/$recipeId',
@@ -61,7 +61,7 @@ class RecipeApi {
     }
   }
 
-  static Future<Response> getIngredients(int categoryId) async {
+  Future<Response> getIngredients(int? categoryId) async {
     try {
       final response = await dio.get(
         'https://10.0.2.2:7012/Recipe/GetIngredients/$categoryId',

@@ -37,7 +37,7 @@ class _GeneratorPageState extends State<GeneratorPage> {
   }
 
   Future<void> onGeneratePressed() async {
-    Response response = await RecipeApi.generateRecipe(
+    Response response = await RecipeApi().generateRecipe(
       generatorController.selectedIngredients,
     );
     Recipe recipe = Recipe.fromJson(response.data['data']);
