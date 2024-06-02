@@ -99,17 +99,13 @@ class _GeneratorPageState extends State<GeneratorPage> {
                             value: generatorController.selectedIngredients
                                 .contains(generatorController.fetchedIngredients[index].ingredientId),
                             onChanged: (bool? value) {
-                              setState(() {
-                                if (value!) {
-                                  generatorController.selectedIngredients.add(
-                                    generatorController.fetchedIngredients[index].ingredientId,
-                                  );
-                                } else {
-                                  generatorController.selectedIngredients.remove(
-                                    generatorController.fetchedIngredients[index].ingredientId,
-                                  );
-                                }
-                              });
+                              if (value!) {
+                                generatorController
+                                    .addIngredient(generatorController.fetchedIngredients[index].ingredientId);
+                              } else {
+                                generatorController
+                                    .removeIngredient(generatorController.fetchedIngredients[index].ingredientId);
+                              }
                             },
                           ),
                         );

@@ -50,10 +50,6 @@ class _AppScaffoldState extends State<AppScaffold> {
       body: _widgetOptions.elementAt(_selectedIndex),
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
-          // BottomNavigationBarItem(
-          //   icon: Icon(Icons.home),
-          //   label: 'Pagrindinis',
-          // ),
           BottomNavigationBarItem(
             icon: Icon(Icons.generating_tokens),
             label: 'Generatorius',

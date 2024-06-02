@@ -21,6 +21,16 @@ class GeneratorController extends ChangeNotifier {
     notifyListeners();
   }
 
+  void addIngredient(int ingredientId) {
+    selectedIngredients.add(ingredientId);
+    notifyListeners();
+  }
+
+  void removeIngredient(int ingredientId) {
+    selectedIngredients.remove(ingredientId);
+    notifyListeners();
+  }
+
   Future<void> onCategoryChanged(ProductCategory value) async {
     _selectedCategory = value;
     await fetchIngredients();
