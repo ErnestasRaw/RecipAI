@@ -221,5 +221,45 @@ namespace ReceptAi.Tests
 			// Assert
 			Assert.IsType<BadRequestObjectResult>(result); // Assert it's a BadRequestObjectResult
 		}
+
+		[Fact]
+		public async Task GetAllFavouriteRecipes_Returns_OkObjectResult_WithRecipes()
+		{
+			// Arrange
+			var mockService = new Mock<IRecipeService>();
+			var controller = new RecipeController(mockService.Object);
+			var userId = 1;
+
+			var expectedRecipes = new List<Recipe>();
+			mockService.Setup(x => x.GetAllFavouriteRecipesAsync(userId)).ReturnsAsync(expectedRecipes);
+
+			// Act
+			var result = await controller.GetAllFavouriteRecipes(userId);
+
+			// Assert
+			var okResult = Assert.IsType<OkObjectResult>(result); // Assert it's an OkObjectResult
+
+			var responseWrapper = Assert.IsType<ResponseWrapper<IEnumerable<Recipe>>>(okResult.Value); // Extract the ResponseWrapper object and assert its type
+			var actualRecipes = responseWrapper.Data; // Extract the Recipe list from the ResponseWrapper
+
+			Assert.Equal(expectedRecipes, actualRecipes); // Optionally, assert more details as needed
+		}
+
+		[Fact]
+		public async Task GetAllFavouriteRecipes_Returns_BadRequest_OnException()
+		{
+			// Arrange
+			var mockService = new Mock<IRecipeService>();
+			var controller = new RecipeController(mockService.Object);
+			var userId = 1;
+
+			mockService.Setup(x => x.GetAllFavouriteRecipesAsync(userId)).ThrowsAsync(new Exception());
+
+			// Act
+			var result = await controller.GetAllFavouriteRecipes(userId);
+
+			// Assert
+			Assert.IsType<BadRequestObjectResult>(result); // Assert it's a BadRequestObjectResult
+		}
 	}
 }
