@@ -5,8 +5,6 @@ on:
     branches:
     - mobile-feature
     
-on: push    # Default will running for every branch.
-    
 jobs:
   build:
     runs-on: ubuntu-latest
