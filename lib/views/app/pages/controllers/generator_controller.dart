@@ -8,14 +8,14 @@ class GeneratorController extends ChangeNotifier {
   final RecipeApi recipeApi;
   GeneratorController({RecipeApi? recipeApi}) : recipeApi = recipeApi ?? RecipeApi();
 
-  ProductCategory _selectedCategory = ProductCategory.values.last;
-  ProductCategory get selectedCategory => _selectedCategory;
+  ProductCategory selectedCategory = ProductCategory.values.last;
+  //ProductCategory get selectedCategory => _selectedCategory;
 
   List<Ingredient> fetchedIngredients = [];
   List<int> selectedIngredients = [];
 
   Future<void> fetchIngredients() async {
-    Response response = await RecipeApi().getIngredients(_selectedCategory.id);
+    Response response = await RecipeApi().getIngredients(selectedCategory.id);
     fetchedIngredients =
         (response.data['data']).map<Ingredient>((ingredient) => Ingredient.fromJson(ingredient)).toList();
     notifyListeners();
@@ -32,7 +32,7 @@ class GeneratorController extends ChangeNotifier {
   }
 
   Future<void> onCategoryChanged(ProductCategory value) async {
-    _selectedCategory = value;
+    selectedCategory = value;
     await fetchIngredients();
   }
 }
