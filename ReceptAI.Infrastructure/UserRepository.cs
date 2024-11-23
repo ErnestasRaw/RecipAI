@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using ReceptAI.Core.Interfaces;
 using ReceptAI.Core.Models;
+using ReceptAI.Core.DTOs;
 
 namespace ReceptAI.Infrastructure
 {

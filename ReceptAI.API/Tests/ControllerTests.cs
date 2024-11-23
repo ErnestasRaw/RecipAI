@@ -12,6 +12,7 @@ using ReceptAI.Core.Models;
 using ReceptAI.Infrastructure;
 using Rystem.OpenAi;
 using ReceptAI.API.Controllers;
+using ReceptAI.Core.DTOs;
 
 namespace ReceptAi.Tests
 {

@@ -16,28 +16,33 @@ namespace ReceptAI.Infrastructure
             _recipeRepository = recipeRepository;
         }
 
-        public async Task<Recipe> GenerateRecipeAsync(List<Ingredient> ingredients)
+		public async Task<Recipe> GenerateRecipeAsync(List<Ingredient> ingredients)
         {
-            if (!ingredients.Any())
-            {
-				throw new ArgumentNullException(nameof(ingredients));
-			}
+	        if (ingredients == null || !ingredients.Any())
+	        {
+		        throw new ArgumentNullException(nameof(ingredients));
+	        }
 
-            var openAIApi = _openAiFactory.Create();
-            var results = await openAIApi.Chat
-                .RequestWithUserMessage(MakePrompt(ingredients))
-                .WithModel(ChatModelType.Gpt35Turbo)
-                .WithTemperature(0.1)
-                .ExecuteAsync();
+	        var openAIApi = _openAiFactory.Create();
+	        var results = await openAIApi.Chat
+		        .RequestWithUserMessage(MakePrompt(ingredients))
+		        .WithModel(ChatModelType.Gpt35Turbo)
+		        .WithTemperature(0.1)
+		        .ExecuteAsync();
 
-            var allText = results.Choices[0].Message.Content;
-            var recipe = FromJson(allText);
-            await _recipeRepository.AddRecipeAsync(recipe);
+	        var allText = results?.Choices?.FirstOrDefault()?.Message?.Content;
+	        if (string.IsNullOrEmpty(allText))
+	        {
+		        throw new InvalidOperationException("Failed to generate recipe.");
+	        }
 
-            return recipe;
+	        var recipe = FromJson(allText);
+	        await _recipeRepository.AddRecipeAsync(recipe);
+
+	        return recipe;
         }
 
-        public async Task AddRecipeToFavouriteAsync(int userId, int recipeId )
+		public async Task AddRecipeToFavouriteAsync(int userId, int recipeId )
         {
             await _recipeRepository.AddRecipeToFavouriteAsync(userId, recipeId);
         }
@@ -76,19 +81,39 @@ namespace ReceptAI.Infrastructure
 
         public static Recipe FromJson(string json)
         {
-            var recipeJson = JObject.Parse(json);
-            var recipeData = recipeJson["recipe"];
+	        if (string.IsNullOrEmpty(json))
+	        {
+		        throw new ArgumentNullException(nameof(json));
+	        }
 
-            var recipe = new Recipe
-            {
-                Name = recipeData["name"].ToString(),
-                Ingredients = string.Join("\n", recipeData["ingredients"].ToObject<List<string>>()),
-                Instructions = string.Join("\n", recipeData["instructions"].ToObject<List<string>>())
-            };
+	        var recipeJson = JObject.Parse(json);
+	        var recipeData = recipeJson["recipe"];
 
-            return recipe;
+	        if (recipeData == null)
+	        {
+		        throw new InvalidOperationException("Invalid JSON format.");
+	        }
+
+	        var name = recipeData["name"]?.ToString();
+	        var ingredients = recipeData["ingredients"]?.ToObject<List<string>>();
+	        var instructions = recipeData["instructions"]?.ToObject<List<string>>();
+
+	        if (string.IsNullOrEmpty(name) || ingredients == null || instructions == null)
+	        {
+		        throw new InvalidOperationException("Missing required recipe data.");
+	        }
+
+	        var recipe = new Recipe
+	        {
+		        Name = name,
+		        Ingredients = string.Join("\n", ingredients),
+		        Instructions = string.Join("\n", instructions)
+	        };
+
+	        return recipe;
         }
 
 
-    }
+
+	}
 }

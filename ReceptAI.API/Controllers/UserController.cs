@@ -2,6 +2,7 @@
 using ReceptAI.Core.Interfaces;
 using ReceptAI.Core.Models;
 using Swashbuckle.AspNetCore.Annotations;
+using ReceptAI.Core.DTOs;
 
 namespace ReceptAI.API.Controllers
 {

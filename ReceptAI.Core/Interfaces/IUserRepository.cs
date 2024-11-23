@@ -1,4 +1,5 @@
 ﻿using ReceptAI.Core.Models;
+using ReceptAI.Core.DTOs;
 
 namespace ReceptAI.Core.Interfaces
 {

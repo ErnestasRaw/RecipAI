@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using ReceptAI.Core.Interfaces;
 using ReceptAI.Infrastructure;
+using Rystem.OpenAi;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -11,14 +12,15 @@ builder.Services.AddScoped<IRecipeRepository, RecipeRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddControllers();
+builder.Services.Configure<OpenAiSettings>(builder.Configuration.GetSection("OpenAiSettings"));
 builder.Services.AddOpenAi(settings =>
 {
-    settings.ApiKey = "";
+	settings.ApiKey = builder.Configuration["OpenAiSettings:ApiKey"];
 });
 builder.Services.AddDbContext<AppDbContext>(options =>
 {
-    options.UseMySql(@"server = localhost; port = 3306; database = receptaidb; username = root;",
-        new MySqlServerVersion(new Version(10, 4, 28)));
+	var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+	options.UseMySql(connectionString, new MySqlServerVersion(new Version(10, 4, 28)));
 });
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
