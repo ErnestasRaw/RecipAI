@@ -1,38 +1,43 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using ReceptAI.Core.Interfaces;
 using ReceptAI.Core.Models;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace ReceptAI.Infrastructure
 {
-    public class RecipeRepository : IRecipeRepository
-    {
-        private readonly AppDbContext _context;
+	public class RecipeRepository : IRecipeRepository
+	{
+		private readonly AppDbContext _context;
+		private readonly IValidationService _validationService;
 
-        public RecipeRepository(AppDbContext context)
-        {
-            _context = context;
-        }
+		public RecipeRepository(AppDbContext context, IValidationService validationService)
+		{
+			_context = context;
+			_validationService = validationService;
+		}
 
-        public async Task<IEnumerable<Recipe>> GetFavouriteRecipesIdAsync(int userId)
-        {
-			if (userId <= 0)
-			{
-				throw new ArgumentException("Invalid user ID.");
-			}
-
+		public async Task<IEnumerable<Recipe>> GetFavouriteRecipesIdAsync(int userId)
+		{
+			_validationService.ValidateUserId(userId);
 			return await _context.Recipes
-                        .Where(r => r.UserId == userId)
-                        .ToListAsync();
-        }
+						.Where(r => r.UserId == userId)
+						.ToListAsync();
+		}
 
-        public async Task AddRecipeAsync(Recipe recipe)
-        {
-            await _context.Recipes.AddAsync(recipe);
-            await _context.SaveChangesAsync();
-        }
+		public async Task AddRecipeAsync(Recipe recipe)
+		{
+			await _context.Recipes.AddAsync(recipe);
+			await _context.SaveChangesAsync();
+		}
 
-        public async Task AddRecipeToFavouriteAsync(int userId, int recipeId)
-        {
+		public async Task AddRecipeToFavouriteAsync(int userId, int recipeId)
+		{
+			_validationService.ValidateUserId(userId);
+			_validationService.ValidateRecipeId(recipeId);
+
 			var recipe = await _context.Recipes.FindAsync(recipeId);
 			if (recipe == null)
 			{
@@ -50,13 +55,9 @@ namespace ReceptAI.Infrastructure
 			await _context.SaveChangesAsync();
 		}
 
-        public async Task DeleteFavouriteRecipeAsync(int id)
-        {
-			if (id <= 0)
-			{
-				throw new ArgumentException("Invalid recipe ID.");
-			}
-
+		public async Task DeleteFavouriteRecipeAsync(int id)
+		{
+			_validationService.ValidateRecipeId(id);
 			var recipe = await _context.Recipes.Where(x => x.RecipeId == id).FirstOrDefaultAsync();
 			if (recipe == null)
 			{
@@ -67,20 +68,20 @@ namespace ReceptAI.Infrastructure
 			await _context.SaveChangesAsync();
 		}
 
-        public async Task<IEnumerable<Ingredient>> GetIngredientsAsync(FoodCategory category)
-        {
+		public async Task<IEnumerable<Ingredient>> GetIngredientsAsync(FoodCategory category)
+		{
 			if (category == null)
 			{
 				throw new ArgumentNullException(nameof(category));
 			}
 
 			return await _context.Ingredients
-                          .Where(ingredient => ingredient.CategoryId == category)
-                          .ToListAsync();
-        }
+						  .Where(ingredient => ingredient.CategoryId == category)
+						  .ToListAsync();
+		}
 
-        public async Task<IEnumerable<Ingredient>> GetIngredientsByIdsAsync(List<int> ingredientIds)
-        {
+		public async Task<IEnumerable<Ingredient>> GetIngredientsByIdsAsync(List<int> ingredientIds)
+		{
 			if (ingredientIds == null || !ingredientIds.Any())
 			{
 				throw new ArgumentException("Ingredient IDs cannot be null or empty.", nameof(ingredientIds));
@@ -90,5 +91,30 @@ namespace ReceptAI.Infrastructure
 						  .Where(ingredient => ingredientIds.Contains(ingredient.IngredientId))
 						  .ToListAsync();
 		}
-    }
+	}
+
+	public interface IValidationService
+	{
+		void ValidateUserId(int userId);
+		void ValidateRecipeId(int recipeId);
+	}
+
+	public class ValidationService : IValidationService
+	{
+		public void ValidateUserId(int userId)
+		{
+			if (userId <= 0)
+			{
+				throw new ArgumentException("Invalid user ID.");
+			}
+		}
+
+		public void ValidateRecipeId(int recipeId)
+		{
+			if (recipeId <= 0)
+			{
+				throw new ArgumentException("Invalid recipe ID.");
+			}
+		}
+	}
 }

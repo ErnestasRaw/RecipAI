@@ -1,17 +1,17 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Moq;
-using ReceptAi.Controllers;
+using ReceptAI.Controllers;
 using ReceptAI.Core.Interfaces;
 using Xunit;
 
 namespace ReceptAI.API.Tests
 {
-	public class RecipeControllerTests
+	public class IntegrationTests
 	{
 		private readonly Mock<IRecipeService> _recipeServiceMock;
 		private readonly RecipeController _controller;
 
-		public RecipeControllerTests()
+		public IntegrationTests()
 		{
 			_recipeServiceMock = new Mock<IRecipeService>();
 			_controller = new RecipeController(_recipeServiceMock.Object);

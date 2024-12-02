@@ -1,4 +1,5 @@
-﻿using ReceptAI.Core.Interfaces;
+﻿using ReceptAI.Core.DTOs;
+using ReceptAI.Core.Interfaces;
 using ReceptAI.Core.Models;
 
 namespace ReceptAI.Infrastructure

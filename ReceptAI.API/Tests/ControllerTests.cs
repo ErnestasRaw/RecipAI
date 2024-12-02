@@ -6,14 +6,15 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Moq;
 using Xunit;
-using ReceptAi.Controllers;
+using ReceptAI.Controllers;
 using ReceptAI.Core.Interfaces;
 using ReceptAI.Core.Models;
 using ReceptAI.Infrastructure;
 using Rystem.OpenAi;
 using ReceptAI.API.Controllers;
+using ReceptAI.Core.DTOs;
 
-namespace ReceptAi.Tests
+namespace ReceptAI.Tests
 {
     public class ControllerTests
     {
@@ -23,10 +24,10 @@ namespace ReceptAi.Tests
 			// Arrange
 			var mockService = new Mock<IRecipeService>();
 			var controller = new RecipeController(mockService.Object);
-			var ingredientIds = new List<int>(); // Add this line to match the controller method signature
+			var ingredientIds = new List<int>();
 
-			var expectedRecipe = new Recipe(); // Assume your service method returns a Recipe object
-			var ingredients = new List<Ingredient>(); // This is the list of ingredients that should be returned by GetIngredientsByIdsAsync
+			var expectedRecipe = new Recipe();
+			var ingredients = new List<Ingredient>();
 
 			mockService.Setup(x => x.GetIngredientsByIdsAsync(ingredientIds)).ReturnsAsync(ingredients);
 			mockService.Setup(x => x.GenerateRecipeAsync(ingredients)).ReturnsAsync(expectedRecipe);
@@ -35,12 +36,12 @@ namespace ReceptAi.Tests
 			var result = await controller.GenerateRecipe(ingredientIds);
 
 			// Assert
-			var okResult = Assert.IsType<OkObjectResult>(result); // Assert it's an OkObjectResult
+			var okResult = Assert.IsType<OkObjectResult>(result);
 
-			var responseWrapper = Assert.IsType<ResponseWrapper<Recipe>>(okResult.Value); // Extract the ResponseWrapper object and assert its type
-			var actualRecipe = responseWrapper.Data; // Extract the Recipe object from the ResponseWrapper
+			var responseWrapper = Assert.IsType<ResponseWrapper<Recipe>>(okResult.Value);
+			var actualRecipe = responseWrapper.Data;
 
-			Assert.Equal(expectedRecipe, actualRecipe); // Optionally, assert more details as needed
+			Assert.Equal(expectedRecipe, actualRecipe);
 		}
 
 
@@ -50,7 +51,7 @@ namespace ReceptAi.Tests
 			// Arrange
 			var mockService = new Mock<IRecipeService>();
 			var controller = new RecipeController(mockService.Object);
-			var ingredientIds = new List<int> { 1, 2, 3 }; // Provide sample ingredient ids
+			var ingredientIds = new List<int> { 1, 2, 3 };
 
 			mockService.Setup(x => x.GenerateRecipeAsync(It.IsAny<List<Ingredient>>())).ThrowsAsync(new Exception());
 
@@ -58,7 +59,7 @@ namespace ReceptAi.Tests
 			var result = await controller.GenerateRecipe(ingredientIds);
 
 			// Assert
-			Assert.IsType<BadRequestObjectResult>(result); // Assert it's a BadRequestObjectResult
+			Assert.IsType<BadRequestObjectResult>(result);
 		}
 
 		[Fact]
@@ -74,10 +75,10 @@ namespace ReceptAi.Tests
 			var result = await controller.AddRecipeToFavourite(userId, recipeId);
 
 			// Assert
-			Assert.IsType<OkObjectResult>(result); // Assert it's an OkObjectResult
+			Assert.IsType<OkObjectResult>(result);
 
 			var okResult = result as OkObjectResult;
-			Assert.IsType<ResponseWrapper<bool>>(okResult.Value); // Assert the response type
+			Assert.IsType<ResponseWrapper<bool>>(okResult.Value);
 		}
 
 		[Fact]
@@ -95,10 +96,8 @@ namespace ReceptAi.Tests
 			var result = await controller.AddRecipeToFavourite(userId, recipeId);
 
 			// Assert
-			Assert.IsType<BadRequestObjectResult>(result); // Assert it's a BadRequestObjectResult
+			Assert.IsType<BadRequestObjectResult>(result);
 		}
-
-		// Similar tests can be written for GetAllFavouriteRecipes and DeleteFavouriteRecipe following the same pattern
 
 		[Fact]
 		public async Task GetIngredients_Returns_OkObjectResult_WithIngredients()
@@ -106,7 +105,7 @@ namespace ReceptAi.Tests
 			// Arrange
 			var mockService = new Mock<IRecipeService>();
 			var controller = new RecipeController(mockService.Object);
-			var categoryId = FoodCategory.GrainsAndCereals; // Assuming FoodCategory is an enum
+			var categoryId = FoodCategory.GrainsAndCereals;
 
 			var expectedIngredients = new List<Ingredient>();
 			mockService.Setup(x => x.GetAllIngredientsAsync(categoryId)).ReturnsAsync(expectedIngredients);
@@ -115,12 +114,12 @@ namespace ReceptAi.Tests
 			var result = await controller.GetIngredients(categoryId);
 
 			// Assert
-			var okResult = Assert.IsType<OkObjectResult>(result); // Assert it's an OkObjectResult
+			var okResult = Assert.IsType<OkObjectResult>(result);
 
-			var responseWrapper = Assert.IsType<ResponseWrapper<IEnumerable<Ingredient>>>(okResult.Value); // Extract the ResponseWrapper object and assert its type
-			var actualIngredients = responseWrapper.Data; // Extract the ingredient list from the ResponseWrapper
+			var responseWrapper = Assert.IsType<ResponseWrapper<IEnumerable<Ingredient>>>(okResult.Value);
+			var actualIngredients = responseWrapper.Data;
 
-			Assert.Equal(expectedIngredients, actualIngredients); // Optionally, assert more details as needed
+			Assert.Equal(expectedIngredients, actualIngredients);
 		}
 
 

@@ -7,7 +7,7 @@ using ReceptAI.Core.Models;
 using ReceptAI.Core.Interfaces;
 using ReceptAI.API.Controllers; // Correct namespace for the controller
 using TechTalk.SpecFlow;
-using ReceptAi.Controllers;
+using ReceptAI.Controllers;
 
 namespace ReceptAI.Tests
 {

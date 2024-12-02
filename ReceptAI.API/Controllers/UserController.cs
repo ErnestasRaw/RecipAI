@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using ReceptAI.Core.DTOs;
 using ReceptAI.Core.Interfaces;
 using ReceptAI.Core.Models;
 using Swashbuckle.AspNetCore.Annotations;
